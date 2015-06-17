@@ -86,4 +86,59 @@ Obviously, substitute the correct release tag!
 
 ## 4. Backport the patch to the ZF2 repository
 
-TBD
+To backport a patch, use the `lts-patch` target of the `maintainer.php` command:
+
+```console
+$ cd path/to/zf2/checkout
+$ path/to/maintainers/bin/maintainer.php lts-patch \
+> --component=zend-view \
+> --patchfile=path/to/zend-view/checkout/name-of-patchfile.patch \
+> --target=./name-of-patchfile.patch
+```
+
+This will rewrite the patch so it can be applied against the LTS branch of ZF2.
+
+Repeat the above for each component that has patches you need to release.
+
+Next, you need to create a temporary release branch and apply the patch.
+
+```console
+$ path/to/maintainers/bin/mainter.php lts-stage 2.4 \
+> --patchfile=./name-of-patchfile.patch
+```
+
+> ### Specifying multiple patchfiles
+>
+> If you created multiple patch files and want to apply them all, you can specify a comma-delimited
+> list of filenames to the `--patchfile` argument:
+>
+> ```console
+> $ path/to/maintainers/bin/mainter.php lts-stage 2.4 \
+> > --patchfile=./name-of-patchfile.patch,./another-patchfile.patch,./etc.patch
+> ```
+
+Check for errors applying the patch(es) (there should not be any), and run the tests specific to the
+patch(es):
+
+```console
+$ cd tests
+$ ../vendor/bin/phpunit ZendTest/View/Helper/ServerUrl.php
+```
+
+> ### Watch out for stale dependencies!
+>
+> One common issue when running the tests is if you have done a composer install or update from the
+> a version >= 2.5.0; in such a case, the individual components have been installed in the vendor
+> directory, and now take precedence over the library code!
+>
+> If you observe failing tests when there shouldn't be, run `composer update` and then re-run the
+> tests.
+
+If all looks well, tag and commit; the `lts-stage` will provide you with the `git tag` command to
+use. You can then push the tag and delete the branch:
+
+```console
+$ git push origin <tagname>:<tagname>
+$ git checkout master
+$ git branch -D release-2.4
+```

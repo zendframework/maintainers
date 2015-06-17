@@ -115,7 +115,7 @@ At this point, you can finally merge to the canonical branches!
 Checkout the target branch (`master` or `develop`), and merge the change in using the `--no-ff`
 flag. For changes going to master, you'll need to do both master and develop.
 
-> ### Configure your checkout
+> #### Configure your checkout
 >
 > Another way you can simplify your job is to configure your checkout. You can omit the need to type
 > the `--no-ff` flag on each merge by adding the following configuration line to the branch
@@ -164,12 +164,13 @@ Forward port #2854
 If the fix will close other PRs or issues, also close those in the target branch using the
 `Fix #...` or `Close #...` notation.
 
-> ### Make macros for commit messages
+> #### Make macros for commit messages
 >
 > Automate, automate, automate. Create a macro in the editor you have configured git to invoke for
 > each of these commit messages; that way you can hit a key combination to fill in the messages for
 > you.
 
+### Push the changes upstream
 
 At this point, you can push your changes. If you committed a bugfix, push both branches:
 
@@ -201,6 +202,23 @@ Once pushed, you can delete the merge branch you created.
 >
 > If you notice merge conflicts, delete your merge branch, and start again from the top.
 
+### Tag the milestone
+
 Finally, if a feature is merged to `master`, flag it for the next maintenance milestone (e.g.,
 "2.0.4"); if merged only to `develop`, flag it for the next minor or major release milestone (e.g.,
 "2.1.0"). This allows users to see when a pull request will release and/or was released.
+
+## FAQ
+
+### What if I want to merge a patch made against develop to master?
+
+Occasionally a contributor will issue a patch against the `develop` branch that would be better
+suited for the `master` branch; typically these are bugfixes that do not introduce any new features.
+When this happens, you need to alter the workflow slightly.
+
+- checkout a branch against develop
+- merge the patch against that branch
+- checkout another branch against master
+- cherry-pick any commits for the patch in the new branch
+- merge the new branch to master and develop
+

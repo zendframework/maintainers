@@ -71,7 +71,8 @@ $ bin/maintainer.php lts-release 2.4 \
 Note that you should **exclude** any components that were involved in the patch; those should
 already be tagged.
 
-Verify that the process finished successfully; if it did not, find out what went wrong.
+Verify that the process finished successfully; if it did not, find out what went wrong. When it
+completes successfully, it will print out the new release version tagged.
 
 To push all LTS repos, use the `lts-components` target of the `bin/maintainers.php` command:
 

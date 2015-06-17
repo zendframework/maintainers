@@ -123,7 +123,8 @@ class Release
         }
 
         $console->writeLine('');
-        $console->writeLine('[DONE] Please verify tags and push.', Color::GREEN);
+        $console->writeLine('[DONE] Please verify tags and push the following tag:', Color::GREEN);
+        $console->writeLine('       release-' . $version);
 
         return 0;
     }

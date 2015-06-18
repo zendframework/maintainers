@@ -78,7 +78,7 @@ To push all LTS repos, use the `lts-components` target of the `bin/maintainers.p
 
 ```console
 $ cd path/above/component/checkouts
-$ for COMPONENT in $(path/to/maintainers/bin/maintainer.php lts-components);do
+$ for COMPONENT in $(path/to/maintainers/bin/maintainer.php lts-components | grep '^zend-');do
 > (cd ${COMPONENT} ; git push origin release-2.4.3:release-2.4.3)
 > done
 ```

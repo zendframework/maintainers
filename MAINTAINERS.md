@@ -216,9 +216,44 @@ Occasionally a contributor will issue a patch against the `develop` branch that 
 suited for the `master` branch; typically these are bugfixes that do not introduce any new features.
 When this happens, you need to alter the workflow slightly.
 
-- checkout a branch against develop
-- merge the patch against that branch
-- checkout another branch against master
-- cherry-pick any commits for the patch in the new branch
-- merge the new branch to master and develop
+- Checkout a branch against develop; use the pull request number, with the suffix `-dev`.
 
+```console
+$ git checkout -b hotfix/1234-dev develop
+```
+
+- Merge the patch against that branch.
+
+```console
+$ git merge <uri of patch>
+```
+
+- Checkout another branch against master. Use the pull request number, with no suffix.
+
+```console
+$ git checkout -b hotfix/1234 master
+```
+
+- Cherry-pick any commits for the patch in the new branch. You can find the sha1 identifiers for
+  each patch in the pull request's "Commits" tab.
+
+```console
+$ git cherry-pick <sha1>
+```
+
+- Merge the new branch to master and develop just as you would for any bugfix.
+
+```console
+$ git checkout master
+$ git merge hotfix/1234
+$ git checkout develop
+$ git merge hotfix/1234
+```
+
+- Since you did not merge the first branch, `hotfix/1234-dev` in our example, you'll need to use the
+  `-D` switch when removing it from your checkout.
+
+```console
+$ git branch -d hotfix/1234
+$ git branch -D hotfix/1234-dev
+```

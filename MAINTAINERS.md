@@ -18,7 +18,85 @@ patches until a significant number of changes are in place. Security fixes, howe
 released immediately and coordinated with the Zend Framework team to ensure an advisory is made, a
 CVE is created, and that the fix is backported to the Long Term Support release.
 
-## Workflow for merging Pull Requests (PR)
+## Reviewing Pull Requests
+
+We recommend reviewing pull requests directly within GitHub. This allows a public commentary on
+changes, providing transparency for all users.
+
+When providing feedback be civil, courteous, and kind. Disagreement is fine, so long as the
+discourse is carried out politely. If we see a record of uncivil or abusive comments, we will revoke
+your commit privileges and invite you to leave the project.
+
+During your review, consider the following points:
+
+- Does the change have impact? While fixing typos is nice as it adds to the overall quality of the
+  project, merging a typo fix at a time can be a waste of effort. (Merging many typo fixes because
+  somebody reviewed the entire component, however, *is* useful!) Other examples to be wary of:
+
+  - Changes in variable names. Ask whether or not the change will make understanding the code
+    easier, or if it could simply a personal preference on the part of the author.
+
+  - Formatting changes. Most formatting changes should be generated only by a coding standards
+    checker/fixer — and those will normally be caught by continuous integration. Ask whether the
+    change is generally improving readability/maintenance, or if it could simply be a personal
+    preference on the part of the author.
+
+  Essentially: feel free to close issues that do not have impact.
+
+- Do the changes make sense? If you do not understand what the changes are or what they accomplish,
+  ask the author for clarification. Ask the author to add comments and/or clarify test case names to
+  make the intentions clear.
+
+  At times, such clarification will reveal that the author may not be using the code correctly, or
+  is unaware of features that accommodate their needs. If you feel this is the case, work up a code
+  sample that would address the issue for them, and feel free to close the issue once they confirm.
+
+- Does the change break backwards compatibility (BC)? If so, work with the contributor to determine
+  why the BC break is needed, and whether or not there may be a way to make the change without
+  breaking BC. Breaking BC should be done only out of necessity, and any break should have
+  accompanying documentation on the impact, as well as how to update applications to accommodate the
+  changes.
+
+  If at all possible, try and introduce new behavior and deprecate existing behavior. This allows
+  users to gradually migrate over a period of releases. The existing, deprecated behavior can then
+  be removed in a later major release.
+
+  Any BC breaks you plan on merging MUST be communicated to the [Zend team](mailto:zf-devteam@zend.com)
+  and/or [Community Review team](mailto:zf-crteam@lists.zend.com) to ensure that testing can be done
+  on related components and so that the main ZF2 release can be tested.
+
+- Is this a new feature? If so:
+
+  - Does the issue contain narrative indicating the need for the feature? If not, ask them to
+    provide that information. Since the issue will be linked in the changelog, this will often be a
+    user's first introduction to it.
+
+  - Are new unit tests in place that test all new behaviors introduced? If not, **do not merge** the
+    feature until they are!
+
+  - Is documentation in place for the new feature? (See the [documentation
+    guidelines](https://github.com/zendframework/documentation/blob/master/CONTRIBUTING.md)). If
+    not **do not merge** the feature until it is!
+
+  - Is the feature necessary for general use cases? Try and keep the scope of any given component
+    narrow. If a proposed feature does not fit that scope, recommend to the user that they maintain
+    the feature on their own, and close the request. You may also recommend that they see if the
+    feature gains traction amongst other users, and suggest they re-submit when they can show such
+    support.
+
+  - Is the feature BC compatible? If so, there's nothing blocking merging it, so long as it passes
+    review, and you can tag it for the next minor release. If it's not, however, you have a decision
+    to make: will the next version be a minor, or a major release? If you decide that you are not
+    ready for a major release yet, indicate to the author that you are not yet ready to merge, and
+    ask them to please keep the patch up-to-date with any merged changes so that it's mergeable when
+    you are ready to schedule a new major release.
+
+    This workflow ensures that the author of the patch is responsible for any merge conflicts. Since
+    the author is the one most familiar with the changes they are introducing, they are the party
+    most likely to resolve conflicts correctly.
+
+
+## Workflow for merging Pull Requests
 
 Check which branch the PR was made against — patches made against the `develop` branch should only
 be merged to `develop`. Patches made against the `master` branch may be merged to only `develop`, or
@@ -207,6 +285,162 @@ Once pushed, you can delete the merge branch you created.
 Finally, if a feature is merged to `master`, flag it for the next maintenance milestone (e.g.,
 "2.0.4"); if merged only to `develop`, flag it for the next minor or major release milestone (e.g.,
 "2.1.0"). This allows users to see when a pull request will release and/or was released.
+
+## Tagging
+
+We recommend tagging frequently. Only allow patches to accumulate if they are not providing
+substantive changes (e.g., documentation updates, typo fixes, formatting changes). You *may* allow
+features to accumulate in the `develop` branch, particularly if you are planning a major release,
+but we encourage tagging frequently.
+
+### Maintenance releases
+
+Tag new maintenance releases against the `master` branch.
+
+First, create a branch for the new version:
+
+```console
+$ git checkout -b release/2.5.3
+```
+
+Next, update the release date for the new version in the `CHANGELOG.md`, and commit the changes.
+
+Merge the release branch into `master` and tag the release. When you do, slurp in the changelog
+entry for the new version into the release message. Be aware that header lines (those starting
+with `### `) will need to be reformatted to the alternate markdown header format (a line of `-`
+characters following the header, at the same width as the header); this ensures that `git` does
+not interpret them as comments.
+
+```console
+$ git checkout master
+$ git merge --no-ff release/2.5.3
+$ git tag -s release-2.5.3
+```
+
+> #### Tag names
+>
+> The various component repositories that were created from the original monolithic ZF2 repository
+> use the tag name format `release-X.Y.Z`. This is the format that has been in use by the Zend
+> Framework project since inception, and we keep it in these repositories for consistency.
+>
+> New repositories, such as zend-diactoros and zend-stratigility, use simply the semantic version as
+> the tag name, without any prefix.
+>
+> Before you tag, check to see what format the repository uses!
+
+The changelog entry for the above might look like the following:
+
+```markdown
+Added
+-----
+
+- [#42](https://github.com/organization/project/pull/42) adds documentation!
+
+Deprecated
+----------
+
+- Nothing.
+
+Removed
+-------
+
+- Nothing.
+
+Fixed
+-----
+
+- [#51](https://github.com/organization/project/pull/51) fixes
+  Something to be Better.
+```
+
+You will then merge to `develop`, as you would for a bugfix:
+
+```console
+$ git checkout develop
+$ git merge --no-ff release/2.5.3
+```
+
+Next, you need to create a stub for the next maintenance version. Create a temporary branch to do
+this:
+
+```console
+$ git checkout -b version/bump master
+```
+
+Edit the `CHANGELOG.md` file to create a stub for the new version; place the following above the top
+changelog entry in the file (substituting the correct version):
+
+```markdown
+## 2.5.4 - YYYY-MM-DD
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+```
+
+Commit the changes, and then merge to each of the `master` and `develop` branches:
+
+```console
+$ git checkout master
+$ git merge --no-ff -m "Bumped version" version/bump
+$ git checkout develop
+$ git merge --no-ff -m "Bumped master version" version/bump
+```
+
+> #### Conflicts
+>
+> Be aware that this last merge to the `develop` branch will generally result in a conflict, as, if
+> you are doing things correctly, you'll have an entry for the next minor or major release in the
+> `develop` branch, and you're now merging in a new empty changelog entry for a maintenance release.
+
+Push the two branches and the new tag:
+
+```console
+$ git push origin master:master && git push origin develop:develop && git push origin release-2.5.3:release-2.5.3
+```
+
+Finally, remove your temporary branches:
+
+```console
+$ git branch -d release/2.5.3 version/bump
+```
+
+### Feature releases
+
+When you're ready to tag a new minor or major version, you'll follow a similar workflow to tagging a
+maintenance release, with a couple of changes.
+
+First, you need to merge the `develop` branch to master:
+
+```console
+$ git checkout master
+$ git merge develop
+```
+
+Assuming you've been following the workflow outlined in this document, this *should* work without
+conflicts. If you see conflicts, it's time to read the workflow again!
+
+At this point, you will proceed as you would for a maintenance release. However, before pushing the
+branches and tags, do the following:
+
+- Checkout the `develop` branch, and edit the `CHANGELOG.md` file to add a new entry at the top for
+  the next minor or major version planned; use the same stub as you used for the version bump.
+
+- Commit the changes to the develop branch.
+
+At that point, you can push the branches, tag, and remove all temporary branches.
 
 ## FAQ
 

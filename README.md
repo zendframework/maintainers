@@ -7,6 +7,8 @@ Framework.
 - [Maintainers Guide](MAINTAINERS.md)
 - [Long Term Support Workflow for Maintainers](LTS-WORKFLOW.md)
 
+For documentation guidelines, visit the [documentation repository](https://github.com/zendframework/documentation/blob/master/CONTRIBUTING.md).
+
 ## Maintainer tools
 
 CLI tools for automating several tasks, particularly the LTS workflows, are present in this

@@ -257,3 +257,9 @@ $ git merge hotfix/1234
 $ git branch -d hotfix/1234
 $ git branch -D hotfix/1234-dev
 ```
+
+### What if I want to merge a patch made against master to develop?
+
+Go for it. One reason for choosing `git-flow` is to simplify merges. Because all changes made
+against `master` are backported to `develop`, you can safely merge any change issued against the
+`master` branch directly to the `develop` branch without issues.

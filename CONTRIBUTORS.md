@@ -62,10 +62,12 @@ Committing code is easy:
 - Create a local development branch for the bugfix; we recommend naming the branch such that you'll
   recognize its purpose: `hotfix/mail-header-parsing`, `feature/yaml-serialization`, etc.
 - Commit a change, and push your local branch to your github fork.
-  ```console
-  $ git commit
-  $ git push yourreponame branchname:branchname
-  ```
+
+```console
+$ git commit
+$ git push yourreponame branchname:branchname
+```
+
 - Send us a pull request for your changes to be included (see the [component list](#component-list)
   below for links).
 

@@ -149,3 +149,12 @@ $ git push origin <tagname>:<tagname>
 $ git checkout master
 $ git branch -D release-2.4
 ```
+
+## 5. Notify the Zend team
+
+Now that the tag is made, the Zend team will need to build and release distribution packages. As
+such, please coordinate with them whenever you tag, so that they can do so as soon as possible after
+a tag is created.
+
+If you cannot find one of them in the usual IRC channels, please send an email to
+zf-deveam@zend.com.

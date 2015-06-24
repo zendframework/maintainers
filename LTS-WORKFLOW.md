@@ -108,6 +108,12 @@ $ path/to/maintainers/bin/mainter.php lts-stage 2.4 \
 > --patchfile=./name-of-patchfile.patch
 ```
 
+This script will apply the patchfile, and then create a commit that:
+
+- bumps the `Zend\Version\Version::VERSION` constant.
+- updates the `README.md` file to reference the new version.
+- updates the `CHANGELOG.md` file to provide patch details.
+
 > ### Specifying multiple patchfiles
 >
 > If you created multiple patch files and want to apply them all, you can specify a comma-delimited
@@ -135,7 +141,7 @@ $ ../vendor/bin/phpunit ZendTest/View/Helper/ServerUrl.php
 > If you observe failing tests when there shouldn't be, run `composer update` and then re-run the
 > tests.
 
-If all looks well, tag and commit; the `lts-stage` will provide you with the `git tag` command to
+At this point, you can now tag; the `lts-stage` will provide you with the `git tag` command to
 use. You can then push the tag and delete the branch:
 
 ```console

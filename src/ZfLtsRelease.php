@@ -112,6 +112,19 @@ class ZfLtsRelease
         }
 
         $nextVersion = $this->incrementVersion($currentVersion);
+
+        // Update VERSION constant
+        $this->updateVersionConstant($nextVersion);
+
+        // Update README.md file
+        $this->updateReadme($nextVersion);
+
+        // Update CHANGELOG.md file
+        $this->updateChangelog($nextVersion, $message);
+
+        // Commit version information
+        $this->commitVersionBump($nextVersion);
+
         $message = sprintf(
             "Zend Framework %s\n\n%s",
             $nextVersion,
@@ -204,6 +217,80 @@ class ZfLtsRelease
         preg_match('/^(?P<minor>\d+\.\d+)\.(?P<patch>\d+)$/', $version, $matches);
         $patch = (int) $matches['patch'] + 1;
         return sprintf('%s.%d', $matches['minor'], $patch);
+    }
+
+    /**
+     * Update the VERSION constant in the Zend\Version\Version classfile.
+     *
+     * @param string $version New version to use.
+     */
+    private function updateVersionConstant($version)
+    {
+        $versionClassFile = 'library/Zend/Version/Version.php';
+        $contents = file_get_contents($versionClassFile);
+        $contents = preg_replace(
+            '/^(\s+const VERSION\s*\=\s*\')[^\']+(\';)$/m',
+            '$1' . $version . '$2',
+            $contents
+        );
+        file_put_contents($versionClassFile, $contents);
+    }
+
+    /**
+     * Update the README file with the new version information.
+     *
+     * @param string $version
+     */
+    private function updateReadme($version)
+    {
+        preg_match('/^(?P<minor>\d+\.\d+)/', $version, $matches);
+        $minor    = $matches['minor'];
+        $date     = date('d F Y');
+        $template = __DIR__ . '/../templates/ZF2-README.md';
+
+        $contents = file_get_contents($template);
+        $contents = str_replace(
+            ['{MINOR}', '{VERSION}', '{DATE}'],
+            [$minor,    $version,    $date],
+            $contents
+        );
+        file_put_contents('README.md', $contents);
+    }
+
+    /**
+     * Update the CHANGELOG with the new version information.
+     *
+     * @param string $version
+     * @param string $changelog
+     */
+    private function updateChangelog($version, $changelog)
+    {
+        $changelogFile = 'CHANGELOG.md';
+        $date          = date('Y-m-d');
+
+        $contents = file_get_contents($changelogFile);
+        $contents = str_replace(
+            '# CHANGELOG',
+            sprintf("# CHANGELOG\n\n## %s (%s)\n\n%s", $version, $date, $changelog),
+            $contents
+        );
+        file_put_contents($changelogFile, $contents);
+    }
+
+    /**
+     * Commit the changes made to the VERSION constant, README, and CHANGELOG.
+     *
+     * @param string $version
+     */
+    private function commitVersionBump($version)
+    {
+        if (0 !== $this->exec(sprintf(
+            '%s commit -a -m "Prepare for %s"',
+            $this->git,
+            $version
+        ), $console)) {
+            $console->writeLine('[ERROR] Could not commit version bump changes!', Color::WHITE, Color::RED);
+        }
     }
 
     /**

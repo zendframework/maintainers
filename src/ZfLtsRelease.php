@@ -246,7 +246,7 @@ class ZfLtsRelease
         preg_match('/^(?P<minor>\d+\.\d+)/', $version, $matches);
         $minor    = $matches['minor'];
         $date     = date('d F Y');
-        $template = __DIR__ . '/../templates/ZF2-README.md';
+        $template = __DIR__ . '/../template/ZF2-README.md';
 
         $contents = file_get_contents($template);
         $contents = str_replace(

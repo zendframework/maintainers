@@ -339,4 +339,5 @@ repository, we suggest doing some cleanup of these branches.
 -  ZF Contributor's IRC channel:
    #zftalk.dev on Freenode.net
 
-If you are working on new features or refactoring [create a proposal](https://github.com/zendframework/zend-authentication/issues/new).
+If you are working on new features or refactoring, please create an issue detailing your proposed
+changes, or create a pull request.

@@ -478,3 +478,65 @@ $ git branch -D hotfix/1234-dev
 Go for it. One reason for choosing `git-flow` is to simplify merges. Because all changes made
 against `master` are backported to `develop`, you can safely merge any change issued against the
 `master` branch directly to the `develop` branch without issues.
+
+### What order should CHANGELOG entries be in?
+
+CHANGELOG entries should be in reverse chronological order based on release date, and taking into
+account *future* release date.
+
+This means that on the `develop` branch, the top entry should always be the one for the version the
+`develop` branch is targeting. Additionally, the `develop` branch should contain a stub for the next
+version represented by the `master` branch:
+
+```markdown
+## 2.6.0 - TBD
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.5.3 - TBD
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+```
+
+Following this practice ensures that as bugfixes are ported to the `develop` branch, merges *should*
+occur without issue, or be untangled relatively easily.
+
+If we decide to skip the maintenance release and go directly to a minor or major release, remove the
+stub for the maintenance release when merging the `develop` branch back to `master`. This is best
+accomplished by adding the `--no-commit` flag when merging, manually removing the stub from the
+changelog and staging it, and then finalizing the commit:
+
+```console
+$ git merge --no-commit develop
+# edit CHANGELOG.md
+$ git add CHANGELOG.md
+$ git commit
+```

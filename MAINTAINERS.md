@@ -557,3 +557,68 @@ $ git merge --no-commit develop
 $ git add CHANGELOG.md
 $ git commit
 ```
+
+In the case that the `master` branch had bugfixes that were never released before a minor/major
+release was cut, you'll need to merge the changelog entries for that release into the `develop`
+branch's changelog. As an example, consider the following:
+
+```markdown
+## 2.6.0 - TBD
+
+### Added
+
+- Useful features that everyone will want.
+
+### Deprecated
+
+- Useless features that are no longer needed.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Stuff that couldn't be fixed as they require additions.
+
+## 2.5.3 - TBD
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- A bunch of stuff that was broken
+```
+
+The above would be merged to a single changelog entry for 2.6.0 which would look like this:
+
+```markdown
+## 2.6.0 - TBD
+
+### Added
+
+- Useful features that everyone will want.
+
+### Deprecated
+
+- Useless features that are no longer needed.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Stuff that couldn't be fixed as they require additions.
+- A bunch of stuff that was broken
+```

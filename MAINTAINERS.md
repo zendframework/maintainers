@@ -18,6 +18,23 @@ patches until a significant number of changes are in place. Security fixes, howe
 released immediately and coordinated with the Zend Framework team to ensure an advisory is made, a
 CVE is created, and that the fix is backported to the Long Term Support release.
 
+> ## DO NOT PRESS THE GREEN BUTTON
+>
+> ![Merge button](img/green-button.png)
+>
+> GitHub provides a button, affectionately called the "green button," for merging pull requests from
+> the web interface.
+>
+> **DO NOT EVER USE IT.**
+>
+> Because we follow git flow, any changes made on `master` must also be merged to `develop`, and
+> this cannot be accomplished from the web interface. Additionally, we request that you annotate
+> the merge commits to reference the pull request and any associated issues; this practice
+> simplifies determining the source of a feature, and allows developers to discover the rationale
+> as well as any discussion that occurred.
+>
+> The remainder of this document details how to merge pull requests to the repositories.
+
 ## Reviewing Pull Requests
 
 We recommend reviewing pull requests directly within GitHub. This allows a public commentary on

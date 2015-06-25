@@ -281,8 +281,9 @@ class ZfLtsRelease
      * Commit the changes made to the VERSION constant, README, and CHANGELOG.
      *
      * @param string $version
+     * @param Console $console
      */
-    private function commitVersionBump($version)
+    private function commitVersionBump($version, Console $console)
     {
         if (0 !== $this->exec(sprintf(
             '%s commit -a -m "Prepare for %s"',

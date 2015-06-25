@@ -360,37 +360,14 @@ $ git checkout develop
 $ git merge --no-ff release/2.5.3
 ```
 
-Next, you need to create a stub for the next maintenance version. Create a temporary branch to do
-this:
+Next, you need to create a CHANGELOG stub for the next maintenance version. Use the
+`bin/maintainers.php changelog-bump` command:
 
 ```console
-$ git checkout -b version/bump master
+$ path/to/maintainers/bin/maintainers.php changelog-bump 2.5.4
 ```
 
-Edit the `CHANGELOG.md` file to create a stub for the new version; place the following above the top
-changelog entry in the file (substituting the correct version):
-
-```markdown
-## 2.5.4 - YYYY-MM-DD
-
-### Added
-
-- Nothing.
-
-### Deprecated
-
-Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-```
-
-Commit the changes, and then merge to each of the `master` and `develop` branches:
+Spot-check the `CHANGELOG.md` file, and then merge to each of the `master` and `develop` branches:
 
 ```console
 $ git checkout master
@@ -435,10 +412,14 @@ conflicts. If you see conflicts, it's time to read the workflow again!
 At this point, you will proceed as you would for a maintenance release. However, before pushing the
 branches and tags, do the following:
 
-- Checkout the `develop` branch, and edit the `CHANGELOG.md` file to add a new entry at the top for
-  the next minor or major version planned; use the same stub as you used for the version bump.
+- Checkout the `develop` branch, and bump the CHANGELOG; use the `--base` argument of the
+  `changelog-bump` command to specify the `develop` branch:
 
-- Commit the changes to the develop branch.
+  ```console
+  $ path/to/maintainers/bin/maintainers.php changelog-bump 2.6.0 --base=develop
+  ```
+
+- Merge the `version/bump` branch to `develop`.
 
 At that point, you can push the branches, tag, and remove all temporary branches.
 

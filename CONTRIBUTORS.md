@@ -89,7 +89,7 @@ configures the tool with our ruleset.
 To validate only, run it in `--dry-run` mode:
 
 ```console
-$ ./vendor/bin/php-cs-fixer fix -v --diff --dry-run --config-file=.php_cs
+$ ./vendor/bin/php-cs-fixer fix -v --diff --dry-run
 ```
 
 This will give you a detailed report of any violations, along with suggested fixes (via diffs).
@@ -97,7 +97,7 @@ This will give you a detailed report of any violations, along with suggested fix
 To fix violoations, run without the `--dry-run` flag:
 
 ```console
-$ ./vendor/bin/php-cs-fixer fix -v --diff --config-file=.php_cs
+$ ./vendor/bin/php-cs-fixer fix -v --diff
 ```
 
 This will correct most issues. Be sure to run unit tests, and, if successful, add and commit your

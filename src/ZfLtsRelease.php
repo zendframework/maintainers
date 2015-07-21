@@ -123,7 +123,7 @@ class ZfLtsRelease
         $this->updateChangelog($nextVersion, $message);
 
         // Commit version information
-        $this->commitVersionBump($nextVersion);
+        $this->commitVersionBump($nextVersion, $console);
 
         $message = sprintf(
             "Zend Framework %s\n\n%s",

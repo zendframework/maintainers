@@ -228,11 +228,8 @@ class ZfLtsRelease
     {
         $versionClassFile = 'library/Zend/Version/Version.php';
         $contents = file_get_contents($versionClassFile);
-        $contents = preg_replace(
-            '/^(\s+const VERSION\s*\=\s*\')[^\']+(\';)$/m',
-            '$1' . $version . '$2',
-            $contents
-        );
+        $repl     = sprintf("    const VERSION = '%s';", $version);
+        $contents = preg_replace('/^\s+const VERSION = \'[^\']+\';/m', $repl, $contents);
         file_put_contents($versionClassFile, $contents);
     }
 

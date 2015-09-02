@@ -1,5 +1,24 @@
 # Projects details
 
+## Reporting Potential Security Issues
+
+If you have encountered a potential security vulnerability, please **DO NOT** report it on the public
+issue tracker: send it to us at [zf-security@zend.com](mailto:zf-security@zend.com) instead.
+We will work with you to verify the vulnerability and patch it as soon as possible.
+
+When reporting issues, please provide the following information:
+
+- Component(s) affected
+- A description indicating how to reproduce the issue
+- A summary of the security vulnerability and impact
+
+We request that you contact us via the email address above and give the project
+contributors a chance to resolve the vulnerability and issue a new release prior
+to any public exposure; this helps protect users and provides them with a chance
+to upgrade and/or update in order to protect their applications.
+
+For sensitive email communications, please use [our PGP key](http://framework.zend.com/zf-security-pgp-key.asc).
+
 | *Project*       | *Maintainers*  | *Teams* |
 | --------------- | -------------- | ------- |
 [ZendSkeletonApplication](https://github.com/zendframework/ZendSkeletonApplication) | [Akrabat](https://github.com/akrabat), [EvantDotPro](https://github.com/EvanDotPro) | community-review-team |

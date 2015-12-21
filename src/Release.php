@@ -85,12 +85,12 @@ class Release
      */
     public function __invoke(Route $route, Console $console)
     {
-        $opts    = $route->getMatches();
-        $minor   = $opts['version'];
+        $minor   = $route->getMatchedParam('version');
         $version = $minor;
-        $exclude = $opts['exclude'];
-        $path    = $opts['basePath'];
+        $exclude = $route->getMatchedParam('exclude');
+        $path    = $route->getMatchedParam('basePath');
 
+        $opts = $route->getMatches();
         $this->verbose = $opts['verbose'] || $opts['v'];
         $this->emit(sprintf("Using git: %s\n", $this->git), $console, Color::BLUE);
 

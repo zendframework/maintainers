@@ -19,6 +19,8 @@ to upgrade and/or update in order to protect their applications.
 
 For sensitive email communications, please use [our PGP key](http://framework.zend.com/zf-security-pgp-key.asc).
 
+## Teams by project
+
 | *Project*       | *Maintainers*  | *Teams* |
 | --------------- | -------------- | ------- |
 [ZendSkeletonApplication](https://github.com/zendframework/ZendSkeletonApplication) | [Akrabat](https://github.com/akrabat), [EvantDotPro](https://github.com/EvanDotPro) | @zendframework/community-review-team |
@@ -57,7 +59,7 @@ For sensitive email communications, please use [our PGP key](http://framework.ze
 [Paginator](https://github.com/zendframework/zend-paginator) | | @zendframework/community-review-team |
 [Permissions](https://github.com/zendframework/zend-permissions) | | @zendframework/community-review-team |
 [ProgressBar](https://github.com/zendframework/zend-progressbar) | | @zendframework/community-review-team |
-[Serializer](https://github.com/zendframework/zend-serializer) | | @zendframework/community-review-team |
+[Serializer](https://github.com/zendframework/zend-serializer) | [marc-mabe](https://github.com/marc-mabe) | @zendframework/zend-serializer, @zendframework/community-review-team |
 [Server](https://github.com/zendframework/zend-server) | | @zendframework/community-review-team |
 [ServiceManager](https://github.com/zendframework/zend-servicemanager) | | @zendframework/community-review-team |
 [Session](https://github.com/zendframework/zend-session) | | @zendframework/community-review-team |

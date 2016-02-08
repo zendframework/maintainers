@@ -56,6 +56,12 @@ $ git tag -s release-2.4.3
 
 When you tag, make sure the tag message includes the CHANGELOG for the release.
 
+> ### Signed tags are REQUIRED
+>
+> Always use the `-s` flag when tagging, and make sure you have setup PGP or GPG
+> to allow you to create signed tags. Unsigned tags _**will be revoked**_ if
+> discovered.
+
 ## 3. Increment the LTS version of all other components
 
 Because the LTS version is for the framework as a whole, *all* components must be released

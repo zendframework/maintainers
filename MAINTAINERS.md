@@ -345,6 +345,12 @@ $ git tag -s release-2.5.3
 >
 > Before you tag, check to see what format the repository uses!
 
+> #### Signed tags are REQUIRED
+>
+> Always use the `-s` flag when tagging, and make sure you have setup PGP or GPG
+> to allow you to create signed tags. Unsigned tags _**will be revoked**_ if
+> discovered.
+
 The changelog entry for the above might look like the following:
 
 ```markdown

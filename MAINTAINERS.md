@@ -432,8 +432,22 @@ $ git merge develop
 Assuming you've been following the workflow outlined in this document, this *should* work without
 conflicts. If you see conflicts, it's time to read the workflow again!
 
-At this point, you will proceed as you would for a maintenance release. However, before pushing the
-branches and tags, do the following:
+At this point, you will proceed as you would for a maintenance release, with a
+couple changes. In your `versions/X.Y.Z` branch, do the following:
+
+- Check that there is not an empty stub or unreleased maintenance version in the
+  `CHANGELOG.md`. For empty stubs, just remove the full entry; for an unreleased
+  maintenance version, merge the entries with those for the new minor or major
+  release.
+- Update the `branch-alias` section of the `composer.json` to bump the
+  `dev-master` and `dev-develop` releases. As an example, if you are preparing a
+  new `2.8.0` release, `dev-master` would now read `2.8-dev` and `dev-develop` would
+  read `2.9-dev`. For a new major version 3.0.0, these would become `3.0-dev`
+  and `3.1-dev`, respectively.
+
+After those and any other changes suggested in the "Maintentance releases"
+section are made, you can prepare to merge to master and develop. However,
+before pushing the branches and tags, do the following:
 
 - Checkout the `develop` branch, and bump the CHANGELOG; use the `--base` argument of the
   `changelog-bump` command to specify the `develop` branch:

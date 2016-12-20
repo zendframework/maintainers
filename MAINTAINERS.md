@@ -226,9 +226,9 @@ As an example of merging a hotfix:
 
 ```console
 $ git checkout master
-$ git merge --no-ff hotfix/2854
+$ git merge --edit --no-ff hotfix/2854
 $ git checkout develop
-$ git merge --no-ff hotfix/2854
+$ git merge --edit --no-ff hotfix/2854
 ```
 
 Note that, because this is a hotfix, it was merged to both `master` *and* `develop`!
@@ -237,7 +237,7 @@ As an example of merging only a feature:
 
 ```
 $ git checkout develop
-$ git merge --no-ff feature/2719
+$ git merge --edit --no-ff feature/2719
 ```
 
 Since this is a feature, it was merged to `develop` *only*.

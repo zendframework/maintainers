@@ -1,0 +1,55 @@
+{
+    "name": "zendframework/<project-name>",
+    "description": "<project-description>",
+    "homepage": "https://docs.zendframework.com/<project-name>/",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "http",
+        "middleware",
+        "psr",
+        "psr-7",
+        "psr-11"
+    ],
+    "support": {
+        "docs": "https://docs.zendframework.com/<project-name>/",
+        "issues": "https://github.com/zendframework/<project-name>/issues",
+        "source": "https://github.com/zendframework/<project-name>",
+        "slack": "https://zendframework-slack.herokuapp.com",
+        "forum": "https://discourse.zendframework.com"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev",
+            "dev-develop": "2.0-dev"
+        }
+    },
+    "require": {
+        "php": "^5.6 || ^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0.8 || ^5.7.15",
+        "zendframework/zend-coding-standard": "~1.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Zend\\<project-name>\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ZendTest\\<project-name>\\": "test/"
+        }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "upload-coverage": "coveralls -v",
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --coverage-clover clover.xml"
+    }
+}

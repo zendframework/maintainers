@@ -5,11 +5,7 @@
     "type": "library",
     "license": "BSD-3-Clause",
     "keywords": [
-        "http",
-        "middleware",
-        "psr",
-        "psr-7",
-        "psr-11"
+        "<individual keywords for current project>"
     ],
     "support": {
         "docs": "https://docs.zendframework.com/<project-name>/",

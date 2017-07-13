@@ -110,6 +110,7 @@ class ChangelogBump
 
         $changelog = sprintf("\n\n## %s - TBD\n\n", $version)
             . "### Added\n\n- Nothing.\n\n"
+            . "### Changed\n\n- Nothing.\n\n"
             . "### Deprecated\n\n- Nothing.\n\n"
             . "### Removed\n\n- Nothing.\n\n"
             . "### Fixed\n\n- Nothing.\n\n";

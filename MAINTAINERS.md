@@ -183,6 +183,10 @@ we follow [Keep a CHANGELOG](http://keepachangelog.com/). The format is simple:
 
 - [#42](https://github.com/organization/project/pull/42) adds documentation!
 
+### Changed
+
+- Nothing.
+
 ### Deprecated
 
 - Nothing.
@@ -359,6 +363,11 @@ Added
 
 - [#42](https://github.com/organization/project/pull/42) adds documentation!
 
+Changed
+-------
+
+- Nothing.
+
 Deprecated
 ----------
 
@@ -532,6 +541,10 @@ version represented by the `master` branch:
 
 - Nothing.
 
+### Changed
+
+- Nothing.
+
 ### Deprecated
 
 - Nothing.
@@ -547,6 +560,10 @@ version represented by the `master` branch:
 ## 2.5.3 - TBD
 
 ### Added
+
+- Nothing.
+
+### Changed
 
 - Nothing.
 
@@ -589,6 +606,10 @@ branch's changelog. As an example, consider the following:
 
 - Useful features that everyone will want.
 
+### Changed
+
+- Nothing.
+
 ### Deprecated
 
 - Useless features that are no longer needed.
@@ -604,6 +625,10 @@ branch's changelog. As an example, consider the following:
 ## 2.5.3 - TBD
 
 ### Added
+
+- Nothing.
+
+### Changed
 
 - Nothing.
 
@@ -628,6 +653,10 @@ The above would be merged to a single changelog entry for 2.6.0 which would look
 ### Added
 
 - Useful features that everyone will want.
+
+### Changed
+
+- Nothing.
 
 ### Deprecated
 

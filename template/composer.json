@@ -13,6 +13,7 @@
         "docs": "https://docs.zendframework.com/<project-name>/",
         "issues": "https://github.com/zendframework/<project-name>/issues",
         "source": "https://github.com/zendframework/<project-name>",
+        "rss": "https://github.com/zendframework/<project-name>/releases.atom",
         "slack": "https://zendframework-slack.herokuapp.com",
         "forum": "https://discourse.zendframework.com/c/questions/<components|expressive|apigility>"
     },

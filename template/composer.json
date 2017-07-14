@@ -2,7 +2,6 @@
     "name": "zendframework/<project-name>",
     "description": "<project description, the same like the repository description>",
     "homepage": "https://docs.zendframework.com/<project-name>/",
-    "type": "library",
     "license": "BSD-3-Clause",
     "keywords": [
         "zend",

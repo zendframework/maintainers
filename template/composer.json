@@ -1,18 +1,19 @@
 {
-    "name": "zendframework/<project-name>",
-    "description": "<project description, the same like the repository description>",
-    "homepage": "https://docs.zendframework.com/<project-name>/",
+    "name": "zendframework/<package_name>",
+    "description": "<package_description, the same like the repository description>",
+    "homepage": "https://docs.zendframework.com/<package_name>/",
     "license": "BSD-3-Clause",
     "keywords": [
         "zend",
         "zendframework",
-        "<individual keywords for current project>"
+        "<package_name>",
+        "<individual keywords for current package>"
     ],
     "support": {
-        "docs": "https://docs.zendframework.com/<project-name>/",
-        "issues": "https://github.com/zendframework/<project-name>/issues",
-        "source": "https://github.com/zendframework/<project-name>",
-        "rss": "https://github.com/zendframework/<project-name>/releases.atom",
+        "docs": "https://docs.zendframework.com/<package_name>/",
+        "issues": "https://github.com/zendframework/<package_name>/issues",
+        "source": "https://github.com/zendframework/<package_name>",
+        "rss": "https://github.com/zendframework/<package_name>/releases.atom",
         "slack": "https://zendframework-slack.herokuapp.com",
         "forum": "https://discourse.zendframework.com/c/questions/<components|expressive|apigility>"
     },
@@ -25,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Zend\\<project-name>\\": "src/"
+            "Zend\\<package_name>\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ZendTest\\<project-name>\\": "test/"
+            "ZendTest\\<package_name>\\": "test/"
         }
     },
     "config": {

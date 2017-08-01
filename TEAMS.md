@@ -17,7 +17,7 @@ contributors a chance to resolve the vulnerability and issue a new release prior
 to any public exposure; this helps protect users and provides them with a chance
 to upgrade and/or update in order to protect their applications.
 
-For sensitive email communications, please use [our PGP key](http://framework.zend.com/zf-security-pgp-key.asc).
+For sensitive email communications, please use [our PGP key](https://framework.zend.com/zf-security-pgp-key.asc).
 
 ## Teams by project
 

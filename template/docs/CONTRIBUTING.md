@@ -5,7 +5,7 @@
 If you wish to contribute to this project, please be sure to
 read/subscribe to the following resources:
 
- - [Coding Standards](https://github.com/{org}/{repo})
+ - [Coding Standards](https://github.com/zendframework/zend-coding-standard)
  - [Forums](https://discourse.zendframework.com/c/contributors)
  - [Slack](https://zendframework-slack.herokuapp.com)
  - [Code of Conduct](CODE_OF_CONDUCT.md)

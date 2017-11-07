@@ -1,20 +1,20 @@
 {
-    "name": "zendframework/<package_name>",
+    "name": "{org}/{repo}",
     "description": "<package_description, the same like the repository description>",
     "license": "BSD-3-Clause",
     "keywords": [
+        "{category}",
         "zf",
         "zendframework",
-        "<package_name>",
         "<individual keywords for current package>"
     ],
     "support": {
-        "docs": "https://docs.zendframework.com/<package_name>/",
-        "issues": "https://github.com/zendframework/<package_name>/issues",
-        "source": "https://github.com/zendframework/<package_name>",
-        "rss": "https://github.com/zendframework/<package_name>/releases.atom",
+        "docs": "https://docs.zendframework.com/{repo}/",
+        "issues": "https://github.com/{org}/{repo}/issues",
+        "source": "https://github.com/{org}/{repo}",
+        "rss": "https://github.com/{org}/{repo}/releases.atom",
         "slack": "https://zendframework-slack.herokuapp.com",
-        "forum": "https://discourse.zendframework.com/c/questions/<components|expressive|apigility>"
+        "forum": "https://discourse.zendframework.com/c/questions/{category}"
     },
     "require": {
         "php": "^7.1"
@@ -25,12 +25,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Zend\\<package_name>\\": "src/"
+            "{namespace}\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ZendTest\\<package_name>\\": "test/"
+            "{namespace-test}\\": "test/"
         }
     },
     "config": {
@@ -40,6 +40,9 @@
         "branch-alias": {
             "dev-master": "1.0-dev",
             "dev-develop": "1.1-dev"
+        },
+        "zf": {
+            "config-provider": "{namespace}\\ConfigProvider"
         }
     },
     "scripts": {

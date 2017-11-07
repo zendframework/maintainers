@@ -14,20 +14,25 @@ For documentation guidelines, visit the [documentation repository](https://githu
 The `template/` directory contains templates for use in creating new
 repositories, including:
 
-- a `LICENSE.md` template; replace `{year}` with the year of creation and/or a
-  range of dates from creation to latest updates.
+- a `composer.json` with a basic package structure.
+- a `LICENSE.md` template.
 - a `.travis.yml` template with recommended configuration for new components.
 - a `docs/` directory with support templates:
   - `CODE_OF_CONDUCT.md` with the Code Manifesto.
-  - `CONTRIBUTING.md` with instructions on how to contribute; replace the
-    placeholders `{org}` and `{repo}` with appropriate values.
-  - `ISSUE_TEMPLATE.md` for new issues; replace the placeholders `{org}` and
-    `{repo}` with appropriate values.
+  - `CONTRIBUTING.md` with instructions on how to contribute.
+  - `ISSUE_TEMPLATE.md` for new issues.
   - `PULL_REQUEST_TEMPLATE.md` for new pull requests.
-  - `SUPPORT.md` with instructions on how to get support for the package;
-    replace the placeholders `{org}` and `{repo}` with appropriate values;
-    replace the placeholder `{category}` with one of `expressive`, `components`,
-    or `apigility`, depending on the repository type.
+  - `SUPPORT.md` with instructions on how to get support for the package.
+
+Templates all use the same placeholders, which can be replaced en masse:
+
+- `{year}` is the year of first publication, or a range of years from first
+  publication until most recent update.
+- `{org}` refers to the github organization under which the package will live.
+- `{repo}` is the name of the repository.
+- `{category}` should be one of `expressive`, `components`, or `apigility`.
+- `{namespace}` should be the top-most namespace unique to the repository.
+- `{namespace-test}` should be the namespace used for unit tests in the repository.
 
 ## Maintainer tools
 

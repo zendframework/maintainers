@@ -1,7 +1,6 @@
 {
     "name": "zendframework/<package_name>",
     "description": "<package_description, the same like the repository description>",
-    "homepage": "https://docs.zendframework.com/<package_name>/",
     "license": "BSD-3-Clause",
     "keywords": [
         "zend",

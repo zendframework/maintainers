@@ -20,12 +20,14 @@ repositories, including:
 - a `docs/` directory with support templates:
   - `CODE_OF_CONDUCT.md` with the Code Manifesto.
   - `CONTRIBUTING.md` with instructions on how to contribute; replace the
-    placeholders `{org}`, `{repo}` with appropriate values.
+    placeholders `{org}` and `{repo}` with appropriate values.
   - `ISSUE_TEMPLATE.md` for new issues; replace the placeholders `{org}` and
     `{repo}` with appropriate values.
   - `PULL_REQUEST_TEMPLATE.md` for new pull requests.
   - `SUPPORT.md` with instructions on how to get support for the package;
-    replace the placeholders `{org}`, `{repo}` with appropriate values.
+    replace the placeholders `{org}` and `{repo}` with appropriate values;
+    replace the placeholder `{category}` with one of `expressive`, `components`,
+    or `apigility`, depending on the repository type.
 
 ## Maintainer tools
 

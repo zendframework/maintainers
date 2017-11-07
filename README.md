@@ -14,8 +14,12 @@ For documentation guidelines, visit the [documentation repository](https://githu
 The `template/` directory contains templates for use in creating new
 repositories, including:
 
+- a `.gitattributes` file with common settings.
+- a `.gitignore` file with common exclusions.
 - a `composer.json` with a basic package structure.
 - a `LICENSE.md` template.
+- a `mkdocs.yml` file with MkDocs configuration.
+- a `README.md` template for new components with basic structure.
 - a `.travis.yml` template with recommended configuration for new components.
 - a `docs/` directory with support templates:
   - `CODE_OF_CONDUCT.md` with the Code Manifesto.

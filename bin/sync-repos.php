@@ -26,7 +26,6 @@ foreach ($list as $comp) {
             'name'         => $name,
             'description'  => $comp['description'],
             'homepage'     => $comp['url'],
-            'has_projects' => false,
             'has_wiki'     => false,
         ]);
         echo 'done';

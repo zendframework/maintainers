@@ -3,7 +3,7 @@
     "description": "<package_description, the same like the repository description>",
     "license": "BSD-3-Clause",
     "keywords": [
-        "zend",
+        "zf",
         "zendframework",
         "<package_name>",
         "<individual keywords for current package>"

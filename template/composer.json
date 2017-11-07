@@ -1,6 +1,6 @@
 {
     "name": "{org}/{repo}",
-    "description": "<package_description, the same like the repository description>",
+    "description": "<package description; should match repository description>",
     "license": "BSD-3-Clause",
     "keywords": [
         "{category}",
@@ -38,8 +38,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev",
-            "dev-develop": "1.1-dev"
+            "dev-master": "1.0-dev"
         },
         "zf": {
             "config-provider": "{namespace}\\ConfigProvider"

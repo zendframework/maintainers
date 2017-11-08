@@ -3,6 +3,20 @@
 This documentation outlines the general procedure for contributing to the
 various Zend Framework components and repositories.
 
+## RESOURCES
+
+If you wish to contribute to this project, please be sure to
+read/subscribe to the following resources:
+
+ - [Coding Standards](https://github.com/zendframework/zend-coding-standard)
+ - [Forums](https://discourse.zendframework.com/c/contributors)
+ - [Slack](https://zendframework-slack.herokuapp.com)
+ - [Code of Conduct](CODE_OF_CONDUCT.md)
+
+If you are working on new features or refactoring
+[create a proposal](https://github.com/{org}/{repo}/issues/new).
+
+
 ## Filing Issue Reports
 
 Before you file an issue report, we ask that you ensure that what you have is indeed a bug, by
@@ -64,7 +78,7 @@ Committing code is easy:
 - Commit a change, and push your local branch to your github fork.
   ```console
   $ git commit
-  $ git push yourreponame branchname:branchname
+  $ git push {username} <branchname>:<branchname>
   ```
 - Send us a pull request for your changes to be included (see the [component list](#component-list)
   below for links).
@@ -72,110 +86,57 @@ Committing code is easy:
 For more details, see the [Recommended Workflow for Contributions](#recommended-workflow-for-contributions)
 section below.
 
-## CODING STANDARDS
-
-- [Zend Framework 1](http://framework.zend.com/manual/1.12/en/coding-standard.html)
-- [Zend Framework 2](CODING_STANDARDS.md)
-
-Projects either use [php-cs-fixer](http://cs.sensiolabs.org/) or
-[phpcs](https://github.com/squizlabs/PHP_CodeSniffer) to validate them; both tools offer
-functionality for fixing most violations.
-
-### php-cs-fixer
-
-Components using [php-cs-fixer](http://cs.sensiolabs.org/) will contain a `.php_cs` file that
-configures the tool with our ruleset.
-
-To validate only, run it in `--dry-run` mode:
-
-```console
-$ ./vendor/bin/php-cs-fixer fix -v --diff --dry-run
-```
-
-This will give you a detailed report of any violations, along with suggested fixes (via diffs).
-
-To fix violoations, run without the `--dry-run` flag:
-
-```console
-$ ./vendor/bin/php-cs-fixer fix -v --diff
-```
-
-This will correct most issues. Be sure to run unit tests, and, if successful, add and commit your
-files on completion:
-
-```console
-$ ./vendor/bin/phpunit
-$ git commit -a -m 'CS fixes as performed by php-cs-fixer'
-```
-### phpcs
-
-Projects using [phpcs](https://github.com/squizlabs/PHP_CodeSniffer) for coding standards can either
-be run using the `--standard=PSR2` flag, or, if a `phpcs.xml` file is present, without any flags:
-
-```console
-# If no phpcs.xml file is present, run the tool over the src and test dirs:
-$ ./vendor/bin/phpcs --standard=PSR2 src test
-# If a phpcs.xml file is present, no arguments are necessary:
-$ ./vendor/bin/phpcs
-```
-
-`phpcs` also provides a tool for fixing discovered errors, `phpcbf`; it can be invoked with exactly
-the same arguments as `phpcs`:
-
-```console
-# If no phpcs.xml file is present, run the tool over the src and test dirs:
-$ ./vendor/bin/phpcbf --standard=PSR2 src test
-# If a phpcs.xml file is present, no arguments are necessary:
-$ ./vendor/bin/phpcbf
-```
-
-This will correct most issues. Be sure to run unit tests, and, if successful, add and commit your
-files on completion:
-
-```console
-$ ./vendor/bin/phpunit
-$ git commit -a -m 'CS fixes as performed by php-cs-fixer'
-```
 ## RUNNING TESTS
-
-> ### Note: testing versions prior to 2.4
->
-> This component originates with Zend Framework 2. During the lifetime of ZF2,
-> testing infrastructure migrated from PHPUnit 3 to PHPUnit 4. In most cases, no
-> changes were necessary. However, due to the migration, tests may not run on
-> versions < 2.4. As such, you may need to change the PHPUnit dependency if
-> attempting a fix on such a version.
 
 To run tests:
 
 - Clone the repository:
 
   ```console
-  $ git clone git@github.com:zendframework/zend-authentication.git
-  $ cd
+  $ git clone git://github.com/{org}/{repo}.git
+  $ cd {repo}
   ```
 
 - Install dependencies via composer:
 
   ```console
-  $ curl -sS https://getcomposer.org/installer | php --
-  $ ./composer.phar install
+  $ composer install
   ```
 
-  If you don't have `curl` installed, you can also download `composer.phar` from https://getcomposer.org/
+  If you don't have `composer` installed, please download it from https://getcomposer.org/download/
 
-- Run the tests via `phpunit` and the provided PHPUnit config, like in this example:
+- Run the tests using the "test" command shipped in the `composer.json`:
 
   ```console
-  $ ./vendor/bin/phpunit
+  $ composer test
   ```
 
-You can turn on conditional tests with the phpunit.xml file.
+You can turn on conditional tests with the `phpunit.xml` file.
 To do so:
 
  -  Copy `phpunit.xml.dist` file to `phpunit.xml`
  -  Edit `phpunit.xml` to enable any specific functionality you
     want to test, as well as to provide test values to utilize.
+
+## Running Coding Standards Checks
+
+First, ensure you've installed dependencies via composer, per the previous
+section on running tests.
+
+To run CS checks only:
+
+```console
+$ composer cs-check
+```
+
+To attempt to automatically fix common CS issues:
+
+```console
+$ composer cs-fix
+```
+
+If the above fixes any CS issues, please re-run the tests to ensure
+they pass, and make sure you add and commit the changes after verification.
 
 ## Recommended Workflow for Contributions
 
@@ -183,20 +144,20 @@ Your first step is to establish a public repository from which we can
 pull your work into the master repository. We recommend using
 [GitHub](https://github.com), as that is where the component is already hosted.
 
-1. Setup a [GitHub account](http://github.com/), if you haven't yet
-2. Fork the repository (http://github.com/zendframework/zend-authentication)
+1. Setup a [GitHub account](https://github.com/), if you haven't yet
+2. Fork the repository (https://github.com/{org}/{repo})
 3. Clone the canonical repository locally and enter it.
 
    ```console
-   $ git clone git://github.com:zendframework/zend-authentication.git
-   $ cd zend-authentication
+   $ git clone git://github.com/{org}/{repo}.git
+   $ cd {repo}
    ```
 
 4. Add a remote to your fork; substitute your GitHub username in the command
    below.
 
    ```console
-   $ git remote add {username} git@github.com:{username}/zend-authentication.git
+   $ git remote add {username} git@github.com:{username}/{repo}.git
    $ git fetch {username}
    ```
 
@@ -259,7 +220,7 @@ Delta compression using up to 2 threads.
 Compression objects: 100% (18/18), done.
 Writing objects: 100% (20/20), 8.19KiB, done.
 Total 20 (delta 12), reused 0 (delta 0)
-To ssh://git@github.com/{username}/zend-authentication.git
+To ssh://git@github.com/{username}/{repo}.git
    b5583aa..4f51698  HEAD -> master
 ```
 
@@ -268,15 +229,7 @@ To send a pull request, you have two options.
 If using GitHub, you can do the pull request from there. Navigate to
 your repository, select the branch you just created, and then select the
 "Pull Request" button in the upper right. Select the user/organization
-"zendframework" as the recipient.
-
-If using your own repository - or even if using GitHub - you can use `git
-format-patch` to create a patchset for us to apply; in fact, this is
-**recommended** for security-related patches. If you use `format-patch`, please
-send the patches as attachments to:
-
--  zf-devteam@zend.com for patches without security implications
--  zf-security@zend.com for security patches
+"zendframework" (or whatever the upstream organization is) as the recipient.
 
 #### What branch to issue the pull request against?
 
@@ -307,14 +260,3 @@ repository, we suggest doing some cleanup of these branches.
    ```console
    $ git push {username} :<branchname>
    ```
-
-## RESOURCES
-
--  ZF Contributor's mailing list:
-   Archives: http://zend-framework-community.634137.n4.nabble.com/ZF-Contributor-f680267.html
-   Subscribe: zf-contributors-subscribe@lists.zend.com
--  ZF Contributor's IRC channel:
-   #zftalk.dev on Freenode.net
-
-If you are working on new features or refactoring, please create an issue detailing your proposed
-changes, or create a pull request.

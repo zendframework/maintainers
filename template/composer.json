@@ -23,15 +23,6 @@
         "phpunit/phpunit": "^6.3",
         "zendframework/zend-coding-standard": "~1.0.0"
     },
-    "provide": {
-        "psr/package": "<version>"
-    },
-    "conflict": {
-        "conflicted/package": "<version>"
-    },
-    "suggest": {
-        "suggested/package": "<suggested version> <description>"
-    },
     "autoload": {
         "psr-4": {
             "{namespace}\\": "src/"
@@ -53,9 +44,6 @@
             "config-provider": "{namespace}\\ConfigProvider"
         }
     },
-    "bin": [
-        "<binary/file.php>"
-    ],
     "scripts": {
         "check": [
             "@cs-check",

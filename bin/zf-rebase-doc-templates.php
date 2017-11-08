@@ -165,10 +165,25 @@ if (! file_exists('.travis.yml')) {
 
 $templateContent = json_decode(file_get_contents(__DIR__ . '/../template/composer.json'), true);
 
-$sectionOrder = [];
-foreach ($templateContent as $section => $value) {
-    $sectionOrder[] = $section;
-}
+$sectionOrder = [
+    'name',
+    'description',
+    'type',
+    'license',
+    'keywords',
+    'support',
+    'require',
+    'require-dev',
+    'provide',
+    'conflict',
+    'suggest',
+    'autoload',
+    'autoload-dev',
+    'config',
+    'extra',
+    'bin',
+    'scripts',
+];
 
 $content = $composer;
 if (isset($content['type']) && $content['type'] === 'library') {

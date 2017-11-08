@@ -123,9 +123,9 @@ file_put_contents('.gitattributes', implode("\n", $content) . "\n");
 $content = preg_split("/\r?\n|\r/", trim(file_get_contents(__DIR__ . '/../template/.gitignore')));
 if (! $hasDocs) {
     $content = array_diff($content, [
-        'docs/html/',
-        'zf-mkdoc-theme.tgz',
-        'zf-mkdoc-theme/',
+        '/docs/html/',
+        '/zf-mkdoc-theme.tgz',
+        '/zf-mkdoc-theme/',
     ]);
 }
 file_put_contents('.gitignore', implode("\n", $content) . "\n");

@@ -136,13 +136,15 @@ usort($content, function ($a, $b) {
 file_put_contents('.gitattributes', implode("\n", $content) . "\n");
 
 // .gitignore
-$content = file_get_contents(__DIR__ . '/../template/.gitignore');
+$content = preg_split("\r?\n\r?", trim(file_get_contents(__DIR__ . '/../template/.gitignore')));
 if (! $hasDocs) {
-    $content = preg_replace('/^docs\/html\/\s+/m', '', $content);
-    $content = preg_replace('/^zf-mkdoc-theme\/\s+/m', '', $content);
-    $content = preg_replace('/^zf-mkdoc-theme\.tgz\s+/m', '', $content);
+    $content = array_diff($content, [
+       'docs/html/',
+       'zf-mkdoc-theme/',
+       'zf-mkdoc-theme.tgz',
+    ]);
 }
-file_put_contents('.gitignore', $content);
+file_put_contents('.gitignore', implode("\n", $content) . "\n");
 
 // .travis.yml - create only when does not exist
 if (! file_exists('.travis.yml')) {

@@ -69,26 +69,23 @@ if (file_exists('CONDUCT.md')) {
     unlink('CONDUCT.md');
 }
 
-// Update LICENSE.md
-
-$currentYear = date('Y');
-$year = $currentYear;
+// Update LICENSE.md - template + use current year
+$year = $startYear = date('Y');
 if (file_exists('LICENSE.md')) {
     $content = file_get_contents('LICENSE.md');
     if (preg_match('/Copyright \(c\) (\d{4})/', $content, $m)) {
-        $year = $m[1];
+        $startYear = $m[1];
     } else {
-        fwrite(STDERR, 'Cannot match year in current LICENSE.md file. Using current year only.' . PHP_EOL);
+        fwrite(
+            STDERR,
+            'Cannot match year or year range in current LICENSE.md file; using current year only.' . PHP_EOL
+        );
     }
 }
 
+$yearReplacement = $startYear < $year ? sprintf('%s-%s', $startYear, $year) : $year;
 $content = file_get_contents(__DIR__ . '/../template/LICENSE.md');
-$content = str_replace(
-    '{year}',
-    $year < $currentYear ? $year . '-' . $currentYear : $currentYear,
-    $content
-);
-
+$content = str_replace('{year}', $yearReplacement, $content);
 file_put_contents('LICENSE.md', $content);
 
 // .coveralls.yml
@@ -258,23 +255,16 @@ file_put_contents(
     ) . PHP_EOL
 );
 
-// update year in mkdocs.yml
+// update mkdocs.yml
 if ($hasDocs) {
     $content = file_get_contents('mkdocs.yml');
     $content = preg_replace('/docs_dir:.*/', 'docs_dir: docs/book', $content);
     $content = preg_replace('/site_dir:.*/', 'site_dir: docs/html', $content);
-
-    if (preg_match('/Copyright \(c\) (\d{4})/', $content, $m)) {
-        $year = $m[1];
-        $copyrightYear = $year < $currentYear ? $year . '-' . $currentYear : $currentYear;
-        $content = preg_replace(
-            '/Copyright \(c\) \d{4}(-\d{4}) /',
-            'Copyright (c) ' . $copyrightYear . ' ',
-            $content
-        );
-    } else {
-        fwrite(STDERR, 'Cannot match year in current mkdocs.yml file' . PHP_EOL);
-    }
+    $content = preg_replace(
+        '/Copyright \(c\) \d{4}(-\d{4})? /',
+        'Copyright (c) ' . $yearReplacement . ' ',
+        $content
+    );
     file_put_contents('mkdocs.yml', $content);
 }
 

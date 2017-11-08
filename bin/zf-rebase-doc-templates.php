@@ -26,7 +26,7 @@ $repo = $m[2];
 if (! is_dir('docs')) {
     // if there is doc directory rename it to docs
     if (is_dir('doc')) {
-        system('git mv doc docs');
+        exec('git mv doc docs');
     } else {
         mkdir('docs', 0775);
     }
@@ -51,11 +51,11 @@ $replace = [
 ];
 
 if (file_exists('CONTRIBUTING.md')) {
-    system('git mv CONTRIBUTING.md docs/CONTRIBUTING.md');
+    exec('git mv CONTRIBUTING.md docs/CONTRIBUTING.md');
 }
 
 if (file_exists('CONDUCT.md')) {
-    system('git mv CONDUCT.md docs/CODE_OF_CONDUCT.md');
+    exec('git mv CONDUCT.md docs/CODE_OF_CONDUCT.md');
 }
 
 foreach ($docs as $file) {

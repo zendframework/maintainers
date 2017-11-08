@@ -1,0 +1,299 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
+if (! file_exists('composer.json')) {
+    fwrite(
+        STDERR,
+        'File composer.json does not exist, please call script from main repository directory'
+    );
+    exit(1);
+}
+
+$composer = json_decode(file_get_contents('composer.json'), true);
+if (! isset($composer['name']) || ! preg_match('/^([a-z-]+)\/([a-z-]+)$/', $composer['name'], $m)) {
+    fwrite(
+        STDERR,
+        'Cannot extract repository name from composer.json, please check value of "name" key in that file.'
+    );
+    exit(1);
+}
+$org = $m[1];
+$repo = $m[2];
+
+// if there is no docs directory create one
+if (! is_dir('docs')) {
+    // if there is doc directory rename it to docs
+    if (is_dir('doc')) {
+        rename('doc', 'docs');
+    } else {
+        mkdir('docs', 0775);
+    }
+}
+
+$docs = [
+    'CODE_OF_CONDUCT.md',
+    'CONTRIBUTING.md',
+    'ISSUE_TEMPLATE.md',
+    'PULL_REQUEST_TEMPLATE.md',
+    'SUPPORT.md',
+];
+
+$replace = [
+    '{org}' => $org,
+    '{repo}' => $repo,
+    '{category}' => strpos($repo, 'zend-expressive') === 0 ? 'expressive' : 'components',
+];
+
+foreach ($docs as $file) {
+    if (file_exists('docs/' . $file)) {
+        unlink('docs/' . $file);
+    }
+
+    $content = file_get_contents(__DIR__ . '/../template/docs/' . $file);
+    $content = strtr($content, $replace);
+
+    file_put_contents('docs/' . $file, $content);
+}
+
+if (file_exists('CONTRIBUTING.md')) {
+    unlink('CONTRIBUTING.md');
+}
+
+if (file_exists('CONDUCT.md')) {
+    unlink('CONDUCT.md');
+}
+
+// Update LICENSE.md
+
+$currentYear = date('Y');
+$year = $currentYear;
+if (file_exists('LICENSE.md')) {
+    $content = file_get_contents('LICENSE.md');
+    if (preg_match('/Copyright \(c\) (\d{4})/', $content, $m)) {
+        $year = $m[1];
+    } else {
+        fwrite(STDERR, 'Cannot match year in current LICENSE.md file. Using current year only.' . PHP_EOL);
+    }
+}
+
+$content = file_get_contents(__DIR__ . '/../template/LICENSE.md');
+$content = str_replace(
+    '{year}',
+    $year < $currentYear ? $year . '-' . $currentYear : $currentYear,
+    $content
+);
+
+file_put_contents('LICENSE.md', $content);
+
+// .coveralls.yml
+file_put_contents('.coveralls.yml', file_get_contents(__DIR__ . '/../template/.coveralls.yml'));
+
+// check if repository has documentation
+$hasDocs = file_exists('mkdocs.yml');
+
+// .gitattributes
+$content = file_get_contents(__DIR__ . '/../template/.gitattributes');
+if (! $hasDocs) {
+    $content = preg_replace('/\/mkdocs\.yml export-ignore\s+/', '', $content);
+}
+if (file_exists('phpbench.json')) {
+    if (file_exists('benchmark') && is_dir('benchmark')) {
+        $content = '/benchmark export-ignore' . PHP_EOL . $content;
+    }
+    if (file_exists('benchmarks') && is_dir('benchmarks')) {
+        $content = '/benchmarks export-ignore' . PHP_EOL . $content;
+    }
+    $content = preg_replace(
+        '/\/phpcs\.xml export-ignore/',
+        '/phpbench.json export-ignore' . PHP_EOL . '/phpcs.xml export-ignore',
+        $content
+    );
+}
+if (file_exists('.docheader')) {
+    if (isset($composer['require-dev']['malukenho/docheader'])) {
+        $content = preg_replace(
+            '/\/\.coveralls.yml export-ignore/',
+            '/.coveralls.yml export-ignore' . PHP_EOL . '/.docheader export-ignore',
+            $content
+        );
+    } else {
+        unlink('.docheader');
+    }
+}
+file_put_contents('.gitattributes', $content);
+
+// .gitignore
+$content = file_get_contents(__DIR__ . '/../template/.gitignore');
+if (! $hasDocs) {
+    $content = preg_replace('/^docs\/html\/\s+/m', '', $content);
+    $content = preg_replace('/^zf-mkdoc-theme\/\s+/m', '', $content);
+    $content = preg_replace('/^zf-mkdoc-theme\.tgz\s+/m', '', $content);
+}
+file_put_contents('.gitignore', $content);
+
+// .travis.yml - create only when does not exist
+if (! file_exists('.travis.yml')) {
+    copy(__DIR__ . '/../template/.travis.yml', '.travis.yml');
+}
+
+// composer.json
+// - checks repository description
+// - checks order of sections
+// - removes default type library
+// - updates scripts
+// - updates license
+// - updates support links
+// - updates "config"
+// - removes "minimum-stability" and "prefer-stable"
+// - checks keywords
+// @todo: check branch-alias
+
+$templateContent = json_decode(file_get_contents(__DIR__ . '/../template/composer.json'), true);
+
+$sectionOrder = [];
+foreach ($templateContent as $section => $value) {
+    $sectionOrder[] = $section;
+}
+
+$content = $composer;
+if (isset($content['type']) && $content['type'] === 'library') {
+    unset($content['type']);
+}
+$content['license'] = $templateContent['license'];
+$content['support'] = $templateContent['support'];
+if (! $hasDocs) {
+    unset($content['support']['docs']);
+}
+foreach ($content['support'] as &$supportLink) {
+    $supportLink = strtr($supportLink, $replace);
+}
+
+$content['config'] = $templateContent['config'];
+$content['scripts'] = $templateContent['scripts'];
+
+if (empty($content['keywords'])) {
+    fwrite(STDERR, 'Missing "keywords" in composer.json');
+} else {
+    $hasZf = false;
+    $hasZendframework = false;
+    foreach ($content['keywords'] as &$keyword) {
+        if ($keyword === 'zf2') {
+            $keyword = 'zf';
+            $hasZf = true;
+        } elseif ($keyword === 'zf') {
+            $hasZf = 'zf';
+        } elseif ($keyword === 'zendframework') {
+            $hasZendframework = true;
+        }
+    }
+
+    if (! $hasZendframework) {
+        array_unshift($content['keywords'], 'zendframework');
+    }
+    if (! $hasZf) {
+        array_unshift($content['keywords'], 'zf');
+    }
+}
+
+if (file_exists('.docheader')) {
+    array_unshift($content['scripts']['check'], '@license-check');
+    $content['scripts']['license-check'] = 'docheader check src/ test/';
+}
+
+unset($content['minimum-stability'], $content['prefer-stable']);
+
+$list = json_decode(
+    file_get_contents('https://docs.zendframework.com/zf-mkdoc-theme/scripts/zf-component-list.json'),
+    true
+);
+
+$description = null;
+foreach ($list as $component) {
+    if (strpos($component['url'], '/' . $repo . '/') !== false) {
+        $description = rtrim($component['description'], '.');
+        break;
+    }
+}
+
+if ($description !== null) {
+    $content['description'] = $description;
+}
+
+// sort section in composer:
+
+uksort($content, function ($a, $b) use ($sectionOrder) {
+    $ia = array_search($a, $sectionOrder);
+    $ib = array_search($b, $sectionOrder);
+
+    if ($ia === $ib) {
+        return 0;
+    }
+
+    if ($ia === false) {
+        return 1;
+    }
+
+    if ($ib === false) {
+        return -1;
+    }
+
+    if ($ia < $ib) {
+        return -1;
+    }
+
+    return 1;
+});
+
+file_put_contents(
+    'composer.json',
+    json_encode(
+            $content,
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+    ) . PHP_EOL
+);
+
+// update year in mkdocs.yml
+if ($hasDocs) {
+    $content = file_get_contents('mkdocs.yml');
+    $content = preg_replace('/docs_dir:.*/', 'docs_dir: docs/book', $content);
+    $content = preg_replace('/site_dir:.*/', 'site_dir: docs/html', $content);
+
+    if (preg_match('/Copyright \(c\) (\d{4})/', $content, $m)) {
+        $year = $m[1];
+        $copyrightYear = $year < $currentYear ? $year . '-' . $currentYear : $currentYear;
+        $content = preg_replace(
+            '/Copyright \(c\) \d{4}(-\d{4}) /',
+            'Copyright (c) ' . $copyrightYear . ' ',
+            $content
+        );
+        file_put_contents('mkdocs.yml', $content);
+    } else {
+        fwrite(STDERR, 'Cannot match year in current mkdocs.yml. File not modified.');
+    }
+}
+
+// README.md
+
+$templateContent = file_get_contents(__DIR__ . '/../template/README.md');
+$buildBadge = null;
+if (preg_match('/\[\!\[Build Status\].*/', $templateContent, $m)) {
+    $buildBadge = strtr($m[0], $replace);
+}
+$coverageBadge = null;
+if (preg_match('/\[\!\[Coverage Status\].*/', $templateContent, $m)) {
+    $coverageBadge = strtr($m[0], $replace);
+}
+
+$content = file_get_contents('README.md');
+if ($buildBadge) {
+    $content = preg_replace('/\[\!\[Build Status\].*/', $buildBadge, $content);
+}
+if ($coverageBadge) {
+    $content = preg_replace('/\[\!\[Coverage Status\].*/', $coverageBadge, $content);
+}
+
+// replace link to the docs
+$content = str_replace('zendframework.github.io', 'docs.zendframework.com', $content);
+file_put_contents('README.md', $content);

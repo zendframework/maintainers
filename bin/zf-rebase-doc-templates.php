@@ -95,7 +95,7 @@ file_put_contents('.coveralls.yml', file_get_contents(__DIR__ . '/../template/.c
 $hasDocs = file_exists('mkdocs.yml');
 
 // .gitattributes
-$content = preg_split("/\r?\n\r?/", trim(file_get_contents(__DIR__ . '/../template/.gitattributes')));
+$content = preg_split("/\r?\n|\r/", trim(file_get_contents(__DIR__ . '/../template/.gitattributes')));
 if (! $hasDocs) {
     $content = array_diff($content, ['/mkdocs.yml export-ignore']);
 }
@@ -136,7 +136,7 @@ usort($content, function ($a, $b) {
 file_put_contents('.gitattributes', implode("\n", $content) . "\n");
 
 // .gitignore
-$content = preg_split("\r?\n\r?", trim(file_get_contents(__DIR__ . '/../template/.gitignore')));
+$content = preg_split("/\r?\n|\r/", trim(file_get_contents(__DIR__ . '/../template/.gitignore')));
 if (! $hasDocs) {
     $content = array_diff($content, [
        'docs/html/',

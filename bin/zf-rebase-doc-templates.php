@@ -123,9 +123,9 @@ file_put_contents('.gitattributes', implode("\n", $content) . "\n");
 $content = preg_split("/\r?\n|\r/", trim(file_get_contents(__DIR__ . '/../template/.gitignore')));
 if (! $hasDocs) {
     $content = array_diff($content, [
-       'docs/html/',
-       'zf-mkdoc-theme/',
-       'zf-mkdoc-theme.tgz',
+        'docs/html/',
+        'zf-mkdoc-theme.tgz',
+        'zf-mkdoc-theme/',
     ]);
 }
 file_put_contents('.gitignore', implode("\n", $content) . "\n");
@@ -263,8 +263,8 @@ uksort($content, function ($a, $b) use ($sectionOrder) {
 file_put_contents(
     'composer.json',
     json_encode(
-            $content,
-            JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
+        $content,
+        JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
     ) . PHP_EOL
 );
 

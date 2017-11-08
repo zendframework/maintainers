@@ -145,7 +145,6 @@ if (! file_exists('.travis.yml')) {
 // - updates "config"
 // - removes "minimum-stability" and "prefer-stable"
 // - checks keywords
-// @todo: check branch-alias
 
 $templateContent = json_decode(file_get_contents(__DIR__ . '/../template/composer.json'), true);
 
@@ -235,8 +234,25 @@ if ($description !== null) {
     $content['description'] = $description;
 }
 
-// sort section in composer:
+// check branch-alias in composer
+// get last released version:
+if ($describe = exec('git describe')) {
+    if (preg_match('/-?(\d+\.\d+)\.\d+-/', $describe, $m)) {
+        $content['extra']['branch-alias']['dev-master'] = $m[1] . '-dev';
 
+        // check if there is develop branch
+        exec('git ls-remote --heads', $output);
+        $output = implode("\n", $output);
+        if (preg_match('#refs/heads/develop#', $output)) {
+            $ver = explode('.', $m[1]);
+            $ver[1]++;
+
+            $content['extra']['branch-alias']['dev-develop'] = implode('.', $ver) . '-dev';
+        }
+    }
+}
+
+// sort section in composer:
 uksort($content, function ($a, $b) use ($sectionOrder) {
     $ia = array_search($a, $sectionOrder);
     $ib = array_search($b, $sectionOrder);

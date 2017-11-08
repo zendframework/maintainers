@@ -43,7 +43,11 @@ $docs = [
 $replace = [
     '{org}' => $org,
     '{repo}' => $repo,
-    '{category}' => strpos($repo, 'zend-expressive') === 0 ? 'expressive' : 'components',
+    '{category}' => strpos($repo, 'zf-') === 0
+        ? 'apigility'
+        : (strpos($repo, 'zend-expressive') === 0
+            ? 'expressive'
+            : 'components'),
 ];
 
 foreach ($docs as $file) {

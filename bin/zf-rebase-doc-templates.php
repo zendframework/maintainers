@@ -272,10 +272,10 @@ if ($hasDocs) {
             'Copyright (c) ' . $copyrightYear . ' ',
             $content
         );
-        file_put_contents('mkdocs.yml', $content);
     } else {
         fwrite(STDERR, 'Cannot match year in current mkdocs.yml. File not modified.');
     }
+    file_put_contents('mkdocs.yml', $content);
 }
 
 // README.md

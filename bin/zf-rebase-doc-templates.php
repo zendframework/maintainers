@@ -201,6 +201,13 @@ foreach ($content['support'] as &$supportLink) {
 $content['config'] = $templateContent['config'];
 $content['scripts'] = $templateContent['scripts'];
 
+// add license-check script only when we use .docheader library
+if (file_exists('.docheader')) {
+    array_unshift($content['scripts']['check'], '@license-check');
+    $content['scripts']['license-check'] = 'docheader check src/ test/';
+}
+
+// check keywords - always we must have "zf" and "zendframework" keywords
 if (empty($content['keywords'])) {
     fwrite(STDERR, 'Missing "keywords" in composer.json' . PHP_EOL);
 } else {
@@ -223,11 +230,6 @@ if (empty($content['keywords'])) {
     if (! $hasZf) {
         array_unshift($content['keywords'], 'zf');
     }
-}
-
-if (file_exists('.docheader')) {
-    array_unshift($content['scripts']['check'], '@license-check');
-    $content['scripts']['license-check'] = 'docheader check src/ test/';
 }
 
 unset($content['minimum-stability'], $content['prefer-stable']);

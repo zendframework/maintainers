@@ -18,6 +18,7 @@
     }
   },
   "bin": [
-    "bin/maintainer.php"
+    "bin/maintainer.php",
+    "bin/zf-rebase-doc-templates.php"
   ]
 }

@@ -95,35 +95,45 @@ file_put_contents('.coveralls.yml', file_get_contents(__DIR__ . '/../template/.c
 $hasDocs = file_exists('mkdocs.yml');
 
 // .gitattributes
-$content = file_get_contents(__DIR__ . '/../template/.gitattributes');
+$content = preg_split("/\r?\n\r?/", trim(file_get_contents(__DIR__ . '/../template/.gitattributes')));
 if (! $hasDocs) {
-    $content = preg_replace('/\/mkdocs\.yml export-ignore\s+/', '', $content);
+    $content = array_diff($content, ['/mkdocs.yml export-ignore']);
 }
 if (file_exists('phpbench.json')) {
-    if (file_exists('benchmark') && is_dir('benchmark')) {
-        $content = '/benchmark export-ignore' . PHP_EOL . $content;
+    // the directory name with benchmarks is not consistent across repositories, we check then both
+    if (is_dir('benchmark')) {
+        $content[] = '/benchmark export-ignore';
     }
-    if (file_exists('benchmarks') && is_dir('benchmarks')) {
-        $content = '/benchmarks export-ignore' . PHP_EOL . $content;
+    if (is_dir('benchmarks')) {
+        $content[] = '/benchmarks export-ignore';
     }
-    $content = preg_replace(
-        '/\/phpcs\.xml export-ignore/',
-        '/phpbench.json export-ignore' . PHP_EOL . '/phpcs.xml export-ignore',
-        $content
-    );
+    $content[] = '/phpbench.json export-ignore';
 }
 if (file_exists('.docheader')) {
     if (isset($composer['require-dev']['malukenho/docheader'])) {
-        $content = preg_replace(
-            '/\/\.coveralls.yml export-ignore/',
-            '/.coveralls.yml export-ignore' . PHP_EOL . '/.docheader export-ignore',
-            $content
-        );
+        $content[] = '/.docheader export-ignore';
     } else {
         unlink('.docheader');
     }
 }
-file_put_contents('.gitattributes', $content);
+usort($content, function ($a, $b) {
+    $aX = explode(' ', $a);
+    $bX = explode(' ', $b);
+
+    $aDir = is_dir(ltrim($aX[0], '/'));
+    $bDir = is_dir(ltrim($bX[0], '/'));
+
+    if ($aDir && ! $bDir) {
+        return -1;
+    }
+
+    if (! $aDir && $bDir) {
+        return 1;
+    }
+
+    return strcasecmp($aX[0], $bX[0]);
+});
+file_put_contents('.gitattributes', implode("\n", $content) . "\n");
 
 // .gitignore
 $content = file_get_contents(__DIR__ . '/../template/.gitignore');

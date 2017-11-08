@@ -6,7 +6,7 @@ require __DIR__ . '/../vendor/autoload.php';
 if (! file_exists('composer.json')) {
     fwrite(
         STDERR,
-        'File composer.json does not exist, please call script from main repository directory'
+        'File composer.json does not exist, please call script from main repository directory' . PHP_EOL
     );
     exit(1);
 }
@@ -178,7 +178,7 @@ $content['config'] = $templateContent['config'];
 $content['scripts'] = $templateContent['scripts'];
 
 if (empty($content['keywords'])) {
-    fwrite(STDERR, 'Missing "keywords" in composer.json');
+    fwrite(STDERR, 'Missing "keywords" in composer.json' . PHP_EOL);
 } else {
     $hasZf = false;
     $hasZendframework = false;
@@ -273,7 +273,7 @@ if ($hasDocs) {
             $content
         );
     } else {
-        fwrite(STDERR, 'Cannot match year in current mkdocs.yml. File not modified.');
+        fwrite(STDERR, 'Cannot match year in current mkdocs.yml file' . PHP_EOL);
     }
     file_put_contents('mkdocs.yml', $content);
 }

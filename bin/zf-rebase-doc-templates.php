@@ -116,23 +116,7 @@ if (file_exists('.docheader')) {
         unlink('.docheader');
     }
 }
-usort($content, function ($a, $b) {
-    $aX = explode(' ', $a);
-    $bX = explode(' ', $b);
-
-    $aDir = is_dir(ltrim($aX[0], '/'));
-    $bDir = is_dir(ltrim($bX[0], '/'));
-
-    if ($aDir && ! $bDir) {
-        return -1;
-    }
-
-    if (! $aDir && $bDir) {
-        return 1;
-    }
-
-    return strcasecmp($aX[0], $bX[0]);
-});
+natsort($content);
 file_put_contents('.gitattributes', implode("\n", $content) . "\n");
 
 // .gitignore

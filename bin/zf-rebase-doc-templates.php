@@ -26,7 +26,7 @@ $repo = $m[2];
 if (! is_dir('docs')) {
     // if there is doc directory rename it to docs
     if (is_dir('doc')) {
-        rename('doc', 'docs');
+        system('git mv doc docs');
     } else {
         mkdir('docs', 0775);
     }
@@ -50,6 +50,14 @@ $replace = [
             : 'components'),
 ];
 
+if (file_exists('CONTRIBUTING.md')) {
+    system('git mv CONTRIBUTING.md docs/CONTRIBUTING.md');
+}
+
+if (file_exists('CONDUCT.md')) {
+    system('git mv CONDUCT.md docs/CODE_OF_CONDUCT.md');
+}
+
 foreach ($docs as $file) {
     if (file_exists('docs/' . $file)) {
         unlink('docs/' . $file);
@@ -59,14 +67,6 @@ foreach ($docs as $file) {
     $content = strtr($content, $replace);
 
     file_put_contents('docs/' . $file, $content);
-}
-
-if (file_exists('CONTRIBUTING.md')) {
-    unlink('CONTRIBUTING.md');
-}
-
-if (file_exists('CONDUCT.md')) {
-    unlink('CONDUCT.md');
 }
 
 // Update LICENSE.md - template + use current year

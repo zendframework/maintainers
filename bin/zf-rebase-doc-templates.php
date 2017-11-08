@@ -236,15 +236,18 @@ if ($description !== null) {
 
 // check branch-alias in composer
 // get last released version:
-if ($describe = exec('git describe')) {
-    if (preg_match('/-?(\d+\.\d+)\.\d+-/', $describe, $m)) {
+if ($tag = exec('git ls-remote --tags origin')) {
+    if (preg_match('#[/-](\d+\.\d+)\.\d+#', $tag, $m)) {
+        $ver = explode('.', $m[1]);
+        if ($ver[0] === '0') {
+            $m[1] = '1.0';
+            $ver[0] = '1';
+            $ver[1] = '0';
+        }
         $content['extra']['branch-alias']['dev-master'] = $m[1] . '-dev';
 
         // check if there is develop branch
-        exec('git ls-remote --heads', $output);
-        $output = implode("\n", $output);
-        if (preg_match('#refs/heads/develop#', $output)) {
-            $ver = explode('.', $m[1]);
+        if ($output = exec('git ls-remote --heads origin refs/heads/develop')) {
             $ver[1]++;
 
             $content['extra']['branch-alias']['dev-develop'] = implode('.', $ver) . '-dev';

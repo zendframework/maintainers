@@ -134,18 +134,23 @@ class CreatePackage extends Command
         $replacementJson['{namespace}'] = str_replace('\\', '\\\\', $replacement['{namespace}']);
         $replacementJson['{namespace-test}'] = str_replace('\\', '\\\\', $replacement['{namespace-test}']);
 
+        /** @var \RecursiveDirectoryIterator $iterator */
         $iterator->rewind();
         while ($iterator->valid()) {
             if (! $iterator->isDot()) {
-                $file = $iterator->getSubPathName();
+                $file = $iterator->getSubPathname();
                 $dirname = dirname($dest . $file);
                 if (! is_dir($dirname)) {
                     mkdir($dirname, 0775, true);
                 }
 
-                $content = file_get_contents($src . $file);
-                $content = strtr($content, $iterator->getExtension() === 'json' ? $replacementJson : $replacement);
-                file_put_contents($dest . $file, $content);
+                if ($iterator->isLink()) {
+                    symlink(readlink($src . $file), $dest . $file);
+                } else {
+                    $content = file_get_contents($src . $file);
+                    $content = strtr($content, $iterator->getExtension() === 'json' ? $replacementJson : $replacement);
+                    file_put_contents($dest . $file, $content);
+                }
             }
 
             $iterator->next();

@@ -314,10 +314,34 @@ if (preg_match('/\[\!\[Coverage Status\].*/', $templateContent, $m)) {
 
 $content = file_get_contents('README.md');
 if ($buildBadge) {
-    $content = preg_replace('/\[\!\[Build Status\].*/', $buildBadge, $content);
+    $content = preg_replace('/\[\!\[Build Status\].*/', $buildBadge, $content, 1, $count);
+
+    if (! $count) {
+        fwrite(
+            STDERR,
+            sprintf(
+                'Missing Build Status badge in README.md; please add:%s%s%s',
+                PHP_EOL,
+                $buildBadge,
+                PHP_EOL
+            )
+        );
+    }
 }
 if ($coverageBadge) {
-    $content = preg_replace('/\[\!\[Coverage Status\].*/', $coverageBadge, $content);
+    $content = preg_replace('/\[\!\[Coverage Status\].*/', $coverageBadge, $content, 1, $count);
+
+    if (! $count) {
+        fwrite(
+            STDERR,
+            sprintf(
+                'Missing Coverage badge in README.md; please add:%s%s%s',
+                PHP_EOL,
+                $coverageBadge,
+                PHP_EOL
+            )
+        );
+    }
 }
 
 // replace link to the docs

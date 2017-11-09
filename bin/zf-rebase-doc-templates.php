@@ -344,6 +344,20 @@ if ($coverageBadge) {
     }
 }
 
-// replace link to the docs
+// replace link to the docs in README.md
 $content = str_replace('zendframework.github.io', 'docs.zendframework.com', $content);
 file_put_contents('README.md', $content);
+
+// update link to the docs in docs/book
+if (is_dir('docs/book/')) {
+    $dir = new RecursiveDirectoryIterator('docs/book/');
+    $iterator = new RecursiveIteratorIterator($dir);
+    $regex = new RegexIterator($iterator, '/^.+\.md$/', RecursiveRegexIterator::GET_MATCH);
+
+    foreach ($regex as $file) {
+        $file = $file[0];
+        $content = file_get_contents($file);
+        $content = str_replace('zendframework.github.io', 'docs.zendframework.com', $content);
+        file_put_contents($file, $content);
+    }
+}

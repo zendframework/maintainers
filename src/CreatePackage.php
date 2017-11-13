@@ -79,11 +79,13 @@ class CreatePackage extends Command
         $this->copyFiles(__DIR__ . '/../template/', $repo . '/', $replacement);
 
         $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('Would you like to create initial commit in the new package? [<info>Y/n</info>] ');
+        $question = new ConfirmationQuestion(
+            'Would you like to run composer and create initial commit in the new package? [<info>Y/n</info>] '
+        );
 
         if ($helper->ask($input, $output, $question)) {
             exec(sprintf(
-                'cd %s && git init . && git add . && git commit -am "Initial creation"',
+                'cd %s && composer update && git init . && git add . && git commit -am "Initial creation"',
                 $repo
             ));
         }

@@ -9,6 +9,7 @@ namespace ZF\Maintainer;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,6 +17,7 @@ use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
 
 class CreatePackage extends Command
 {
@@ -106,23 +108,50 @@ class CreatePackage extends Command
             $namespace .= '\\' . ucfirst(array_shift($exp));
         }
 
-        if (! $exp) {
-            return $namespace;
+        $namespaces = [];
+        if ($exp) {
+            $base = ucwords(implode(' ', $exp));
+            $namespaces[] = $namespace . '\\' . str_replace(' ', '\\', $base);
+            $namespaces[] = $namespace . '\\' . str_replace(' ', '', $base);
+        } else {
+            $namespaces[] = $namespace;
         }
-
-        $namespace1 = str_replace(' ', '\\', ucwords(implode(' ', $exp)));
-        $namespace2 = str_replace('\\', '', $namespace1);
+        $namespaces['c'] = 'custom';
 
         $helper = $this->getHelper('question');
 
         $question = new ChoiceQuestion(
             'What namespace would you like to use?',
-            [
-                $namespace . '\\' . $namespace1,
-                $namespace . '\\' . $namespace2,
-            ]
+            $namespaces,
+            0
         );
         $question->setErrorMessage('Invalid choice "%s". Please try again.');
+
+        $answer = $helper->ask($input, $output, $question);
+
+        if ($answer !== 'c') {
+            return $answer;
+        }
+
+        $question = new Question('Custom namespace: ');
+        $question->setValidator(function ($value) use ($repo) {
+            $firstPart = strpos($repo, 'zf') === 0 ? 'ZF' : 'Zend';
+            if (! preg_match('/^' . $firstPart . '(\\[A-Z][a-z0-9]*)+$/', $value)) {
+                throw new RuntimeException(sprintf(
+                    'Invalid namespace provided: %s',
+                    $value
+                ));
+            }
+
+            // must be consistent with package name
+            if (strtolower(str_replace('\\', '', $value))
+                !== strtolower(str_replace('-', '', $repo))
+            ) {
+                throw new RuntimeException('Namespace have to be consistent with package name');
+            }
+
+            return $value;
+        });
 
         return $helper->ask($input, $output, $question);
     }

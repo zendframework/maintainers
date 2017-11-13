@@ -27,7 +27,20 @@ class CreatePackage extends Command
         $this
             ->setName('create-package')
             ->setDescription('Creates a new package')
-            ->setHelp('here is the help...')
+            ->setHelp(
+                'The new package will be created in the directory of provided package name.'
+                . ' The package will be initialized with the whole basic structure.'
+                . ' It will be possible to choose namespace, based on provided package name,'
+                . ' or provide another namespace. At the end of the process it is possible to'
+                . ' create initial commit with the whole package structure.'
+                . PHP_EOL . PHP_EOL
+                . 'Package is created with documentation templates, all support files,'
+                . ' QA tools (CodeSniffer and PHPUnit), default ConfigProvider with tests,'
+                . ' Travis CI and coveralls configuration.'
+                . PHP_EOL . PHP_EOL
+                . 'Currently it supports zendframework and zfcampus organizations packages:'
+                . ' these must start with "zend-" or "zf-" respectively.'
+            )
             ->addArgument('name', InputArgument::REQUIRED, 'The name of the package to create');
     }
 

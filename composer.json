@@ -20,6 +20,6 @@
   },
   "bin": [
     "bin/maintainer.php",
-    "bin/zf-maintainer.php"
+    "bin/zf-maintainer"
   ]
 }

@@ -36,7 +36,7 @@ class CreatePackage extends Command
         if (! preg_match('/^(zend|zf)-[a-z0-9-]+$/', $name)) {
             throw new \InvalidArgumentException(
                 'Invalid package name, must be prefixed with "zend-" or "zf-"'
-                . ' and can contain only alphanumeric characters and dash.'
+                . ' and can contain only lowercase letters, numbers and dash.'
             );
         }
     }

@@ -7,6 +7,7 @@
 
 namespace ZF\Maintainer;
 
+use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
@@ -36,7 +37,7 @@ class CreatePackage extends Command
 
         $name = $input->getArgument('name');
         if (! preg_match('/^(zend|zf)-[a-z0-9-]+$/', $name)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Invalid package name, must be prefixed with "zend-" or "zf-"'
                 . ' and can contain only lowercase letters, numbers and dash.'
             );

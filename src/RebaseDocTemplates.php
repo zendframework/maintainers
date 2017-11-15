@@ -28,34 +28,33 @@ class RebaseDocTemplates extends Command
             ->setName('rebase-doc-templates')
             ->setDescription('Rebase documentation templates for the package')
             ->setHelp(
-                'Rebase all documentation templates for a provided package.'
+                'Rebase all documentation templates for the package specified.'
                 . PHP_EOL . PHP_EOL
-                . 'Documentation directory will be renamed from "doc" to "docs".'
-                . ' The script executes the following actions:'
-                . PHP_EOL . '  - renames documentation directory: doc -> docs (or create if does not exist);'
-                . PHP_EOL . '  - places all supporting files into docs with github templates;'
-                . PHP_EOL . '  - updates links to online documentation to docs.zendframework.com;'
-                . PHP_EOL . '  - updates coveralls configuration;'
-                . PHP_EOL . '  - updates .gitattributes and .gitignore;'
-                . PHP_EOL . '  - creates Travis CI configuration if does not exist;'
-                . PHP_EOL . '  - updates LICENSE.md template and year range;'
-                . PHP_EOL . '  - updates documentation configuration - copyright year and docs dirs;'
-                . PHP_EOL . '  - updates composer.json skeleton:'
-                . PHP_EOL . '    - checks and fixes repository description (only for zendframework org);'
-                . PHP_EOL . '    - checks and fixes order of sections;'
-                . PHP_EOL . '    - removes default type library;'
-                . PHP_EOL . '    - updates scripts;'
-                . PHP_EOL . '    - updates license;'
-                . PHP_EOL . '    - updates support links;'
-                . PHP_EOL . '    - updates "config" - sort packages;'
-                . PHP_EOL . '    - removes "minimum-stability" and "prefer-stable" keys;'
-                . PHP_EOL . '    - checks keywords;'
-                . PHP_EOL . '    - checks branch aliases;'
+                . 'The script executes the following actions:' . PHP_EOL
+                . '  - renames documentation directory: doc -> docs (or creates it if it does not exist)' . PHP_EOL
+                . '  - places all supporting files into docs/ (github templates)' . PHP_EOL
+                . '  - updates links to online documentation to point to docs.zendframework.com' . PHP_EOL
+                . '  - updates coveralls configuration' . PHP_EOL
+                . '  - updates .gitattributes and .gitignore definitions' . PHP_EOL
+                . '  - creates Travis CI configuration if does not exist' . PHP_EOL
+                . '  - updates LICENSE.md year range; creates file if it does not exist' . PHP_EOL
+                . '  - updates documentation configuration (copyright year and docs/ dir)' . PHP_EOL
+                . '  - updates composer.json skeleton:' . PHP_EOL
+                . '    - checks and fixes repository description (only for zendframework org)' . PHP_EOL
+                . '    - checks and fixes order of sections' . PHP_EOL
+                . '    - removes default type library' . PHP_EOL
+                . '    - updates scripts' . PHP_EOL
+                . '    - updates license' . PHP_EOL
+                . '    - updates support links' . PHP_EOL
+                . '    - updates "config" (adds sort-packages flag)' . PHP_EOL
+                . '    - removes "minimum-stability" and "prefer-stable" keys' . PHP_EOL
+                . '    - checks keywords' . PHP_EOL
+                . '    - checks branch aliases'
             )
             ->addArgument(
                 'path',
                 InputArgument::REQUIRED,
-                'Path to the package'
+                'Path to the package (often ".").'
             );
     }
 

@@ -8,8 +8,9 @@
   "require": {
     "knplabs/github-api": "^2.6",
     "php-http/guzzle6-adapter": "^1.1",
-    "zendframework/zend-validator": "^2.5",
+    "symfony/console": "^3.3.12",
     "zendframework/zend-filter": "^2.5",
+    "zendframework/zend-validator": "^2.5",
     "zfcampus/zf-console": "^1.2.1"
   },
   "autoload": {
@@ -18,6 +19,7 @@
     }
   },
   "bin": [
-    "bin/maintainer.php"
+    "bin/maintainer.php",
+    "bin/zf-maintainer"
   ]
 }

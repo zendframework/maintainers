@@ -229,7 +229,7 @@ class CreatePackage extends Command
             return 'apigility';
         }
 
-        if (strpos('zend-expressive', $repo)) {
+        if (strpos('-expressive-', $repo)) {
             return 'expressive';
         }
 

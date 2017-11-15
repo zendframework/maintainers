@@ -184,6 +184,7 @@ class RebaseDocTemplates extends Command
 
         // License docheader
         if (file_exists(sprintf('%s/.docheader', $this->path))) {
+            $composer = $this->getComposerContent();
             if (isset($composer['require-dev']['malukenho/docheader'])) {
                 $content[] = '/.docheader export-ignore';
             } else {

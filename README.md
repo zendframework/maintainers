@@ -14,19 +14,26 @@ For documentation guidelines, visit the [documentation repository](https://githu
 The `template/` directory contains templates for use in creating new
 repositories, including:
 
+- a `.coveralls.yml` file with common settings.
 - a `.gitattributes` file with common settings.
 - a `.gitignore` file with common exclusions.
+- a `.travis.yml` template with recommended configuration for new components.
+- a `CHANGELOG.md` template with library changelog.
 - a `composer.json` with a basic package structure.
 - a `LICENSE.md` template.
 - a `mkdocs.yml` file with MkDocs configuration.
+- a `phpcs.xml` file with zend coding standard configuration.
+- a `phpunit.xml.dist§ file with PHPUnit configuration.
 - a `README.md` template for new components with basic structure.
-- a `.travis.yml` template with recommended configuration for new components.
 - a `docs/` directory with support templates:
   - `CODE_OF_CONDUCT.md` with the Code Manifesto.
   - `CONTRIBUTING.md` with instructions on how to contribute.
   - `ISSUE_TEMPLATE.md` for new issues.
   - `PULL_REQUEST_TEMPLATE.md` for new pull requests.
   - `SUPPORT.md` with instructions on how to get support for the package.
+- a `docs/book/` directory with documentation template.
+- a `src/` directory with `ConfigProvider` template.
+- a `test/` directory with `ConfigProviderTest` test case.
 
 Templates all use the same placeholders, which can be replaced en masse:
 
@@ -48,3 +55,11 @@ $ composer install
 ```
 
 to ensure dependencies are present. The tools are in the `bin/maintainers.php` script.
+
+### `bin/zf-maintainer`
+
+This script currently has the following actions:
+- `create-package <name>` - creates a new package from templates;
+- `rebase-doc-template <path>` - rebases all templates for specified package.
+
+To get more information about each command you can call them with `--help` flag.

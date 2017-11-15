@@ -55,3 +55,11 @@ $ composer install
 ```
 
 to ensure dependencies are present. The tools are in the `bin/maintainers.php` script.
+
+### `bin/zf-maintainer`
+
+This script currently has the following actions:
+- `create-package <name>` - creates a new package from templates;
+- `rebase-doc-template <path>` - rebases all templates for specified package.
+
+To get more information about each command you can call them with `--help` flag.

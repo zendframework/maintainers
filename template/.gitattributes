@@ -3,8 +3,8 @@
 /.gitignore export-ignore
 /.travis.yml export-ignore
 /composer.lock export-ignore
-/docs export-ignore
+/docs/ export-ignore
 /mkdocs.yml export-ignore
 /phpcs.xml export-ignore
 /phpunit.xml.dist export-ignore
-/test export-ignore
+/test/ export-ignore

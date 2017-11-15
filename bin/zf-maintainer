@@ -13,5 +13,6 @@ use Symfony\Component\Console\Application;
 $application = new Application();
 
 $application->add(new \ZF\Maintainer\CreatePackage());
+$application->add(new \ZF\Maintainer\RebaseDocTemplates());
 
 $application->run();

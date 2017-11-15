@@ -6,8 +6,10 @@
     "sort-packages": true
   },
   "require": {
+    "php": "^5.6 || ^7.0",
     "knplabs/github-api": "^2.6",
     "php-http/guzzle6-adapter": "^1.1",
+    "symfony/console": "^3.3.12",
     "zendframework/zend-filter": "^2.5",
     "zendframework/zend-validator": "^2.5",
     "zfcampus/zf-console": "^1.2.1"
@@ -19,6 +21,6 @@
   },
   "bin": [
     "bin/maintainer.php",
-    "bin/zf-rebase-doc-templates.php"
+    "bin/zf-maintainer"
   ]
 }

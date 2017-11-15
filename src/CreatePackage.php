@@ -225,11 +225,11 @@ class CreatePackage extends Command
 
     private function getCategory($repo)
     {
-        if (strpos('zf-', $repo)) {
+        if (strpos('zf-', $repo) === 0) {
             return 'apigility';
         }
 
-        if (strpos('-expressive-', $repo)) {
+        if (strpos('-expressive-', $repo) !== false) {
             return 'expressive';
         }
 

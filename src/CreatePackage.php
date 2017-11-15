@@ -38,10 +38,16 @@ class CreatePackage extends Command
                 . ' QA tools (CodeSniffer and PHPUnit), default ConfigProvider with tests,'
                 . ' Travis CI and coveralls configuration.'
                 . PHP_EOL . PHP_EOL
-                . 'Currently it supports zendframework and zfcampus organizations packages:'
-                . ' these must start with "zend-" or "zf-" respectively.'
+                . 'Package name can be provided with the organization in format org/name.'
+                . ' When organization is not specified explicitly the script will try to'
+                . ' detect it based on the name. For names starting from "zend-" and "zf-"'
+                . ' organizations "zendframework" and "zfcampus" will be used respectively.'
             )
-            ->addArgument('name', InputArgument::REQUIRED, 'The name of the package to create');
+            ->addArgument(
+                'name',
+                InputArgument::REQUIRED,
+                'The name of the package to create; can be provided with organization name: org/name'
+            );
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -49,17 +55,17 @@ class CreatePackage extends Command
         parent::initialize($input, $output);
 
         $name = $input->getArgument('name');
-        if (! preg_match('/^(zend|zf)-[a-z0-9-]+$/', $name)) {
+        if (! preg_match('#^[a-z0-9-]+(/[a-z0-9-]+)?$#', $name)) {
             throw new InvalidArgumentException(
-                'Invalid package name, must be prefixed with "zend-" or "zf-"'
-                . ' and can contain only lowercase letters, numbers and dash.'
+                'Invalid package name, can contain only lowercase letters, numbers and dash.'
             );
         }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $repo = $input->getArgument('name');
+        $name = $input->getArgument('name');
+        list($org, $repo) = $this->getOrg($name);
 
         $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
 
@@ -84,11 +90,11 @@ class CreatePackage extends Command
         $namespace = $this->determineNamespace($input, $output, $repo);
 
         $replacement = [
-            '{org}' => $this->getOrg($repo),
+            '{org}' => $org,
             '{repo}' => $repo,
             '{category}' => $this->getCategory($repo),
             '{namespace}' => $namespace,
-            '{namespace-test}' => preg_replace('/^(Zend|ZF)/', '\\1Test', $namespace),
+            '{namespace-test}' => $this->getTestNamespace($namespace),
             '{year}' => date('Y'),
         ];
 
@@ -107,30 +113,26 @@ class CreatePackage extends Command
         }
     }
 
+    private function getTestNamespace($namespace)
+    {
+        $parts = explode('\\', $namespace);
+        $parts[0] .= 'Test';
+
+        return implode('\\', $parts);
+    }
+
     private function determineNamespace(InputInterface $input, OutputInterface $output, $repo)
     {
         $exp = explode('-', $repo);
 
-        $namespace = array_shift($exp) === 'zend' ? 'Zend' : 'ZF';
-
-        if ($exp[0] === 'expressive') {
-            $namespace .= '\Expressive';
-            array_shift($exp);
+        if ($exp[0] === 'zf') {
+            $exp[0] = 'ZF';
         }
 
-        if (count($exp) === 1) {
-            $namespace .= '\\' . ucfirst(array_shift($exp));
-        }
-
-        $namespaces = [];
-        if ($exp) {
-            $base = ucwords(implode(' ', $exp));
-            $namespaces[] = $namespace . '\\' . str_replace(' ', '\\', $base);
-            $namespaces[] = $namespace . '\\' . str_replace(' ', '', $base);
-        } else {
-            $namespaces[] = $namespace;
-        }
-        $namespaces['c'] = 'custom';
+        $namespaces = [
+            str_replace(' ', '\\', ucwords(implode(' ', $exp))),
+            'c' => 'custom',
+        ];
 
         $helper = $this->getHelper('question');
 
@@ -144,17 +146,18 @@ class CreatePackage extends Command
         $answer = $helper->ask($input, $output, $question);
 
         if ($answer !== 'c') {
-            return $answer;
+            return $namespaces[$answer];
         }
 
         $question = new Question('Custom namespace: ');
         $question->setValidator(function ($value) use ($repo) {
-            $firstPart = strpos($repo, 'zf') === 0 ? 'ZF' : 'Zend';
-            if (! preg_match('/^' . $firstPart . '(\\[A-Z][a-z0-9]*)+$/', $value)) {
-                throw new RuntimeException(sprintf(
-                    'Invalid namespace provided: %s',
-                    $value
-                ));
+            if (strpos($repo, 'zf-') === 0 || strpos($repo, 'zend-') === 0) {
+                if (! preg_match('/^(ZF|Zend)(\\\\[A-Z][a-zA-Z0-9]*)+$/', $value)) {
+                    throw new RuntimeException(sprintf(
+                        'Invalid namespace provided: %s',
+                        $value
+                    ));
+                }
             }
 
             // must be consistent with package name
@@ -204,11 +207,20 @@ class CreatePackage extends Command
 
     private function getOrg($repo)
     {
-        if (strpos('zf-', $repo)) {
-            return 'zfcampus';
+        if (false !== strpos($repo, '/')) {
+            return explode('/', $repo, 2);
         }
 
-        return 'zendframework';
+        if (! preg_match('/^(?P<type>zend|zf)-/', $repo, $matches)) {
+            throw new RuntimeException('Missing organization in package name');
+        }
+
+        switch ($matches['type']) {
+            case 'zend':
+                return ['zendframework', $repo];
+            case 'zf':
+                return ['zfcampus', $repo];
+        }
     }
 
     private function getCategory($repo)

@@ -65,11 +65,11 @@ When you tag, make sure the tag message includes the CHANGELOG for the release.
 ## 3. Increment the LTS version of all other components
 
 Because the LTS version is for the framework as a whole, *all* components must be released
-simultaneously with the same new LTS version. The script `bin/maintainer.php` will help you in
+simultaneously with the same new LTS version. The script `bin/zf-maintainer` will help you in
 tagging those:
 
 ```console
-$ bin/zf-maintainer lts:release 2.4 \
+$ path/to/maintainers/bin/zf-maintainer lts:release 2.4 \
 > --exclude=zend-http --exclude=zend-mvc \
 > --basePath=path/above/component/checkouts
 ```
@@ -122,8 +122,8 @@ This script will apply the patchfile, and then create a commit that:
 
 > ### Specifying multiple patchfiles
 >
-> If you created multiple patch files and want to apply them all, you can multiple
-> `--patchfile` arguments:
+> If you created multiple patch files and want to apply them all, you can use
+> `--patchfile` argument multiple times:
 >
 > ```console
 > $ path/to/maintainers/bin/zf-maintainer lts:stage 2.4 \
@@ -162,5 +162,5 @@ Now that the tag is made, the Zend team will need to build and release distribut
 such, please coordinate with them whenever you tag, so that they can do so as soon as possible after
 a tag is created.
 
-If you cannot find one of them in the usual IRC channels, please send an email to
-zf-deveam@zend.com.
+If you cannot find one of them in the [Slack](https://zendframework-slack.herokuapp.com),
+please send an email to zf-deveam@zend.com.

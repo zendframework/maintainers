@@ -95,14 +95,14 @@ class Release extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $minor   = $input->getArgument('version');
-        $version = $minor;
-        $exclude = $input->getOption('exclude');
-        $path    = $input->getOption('basePath');
+        $minor    = $input->getArgument('version');
+        $version  = $minor;
+        $excludes = $input->getArgument('exclude');
+        $path     = $input->getOption('basePath');
 
         chdir($path);
         foreach ($this->components as $component) {
-            if (in_array($component, $exclude, true)) {
+            if (in_array($component, $excludes, true)) {
                 $output->writeln(sprintf('<info>[SKIP] %s</info>', $component));
                 continue;
             }

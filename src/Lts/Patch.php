@@ -28,7 +28,7 @@ class Patch extends Command
         'servicemanager'   => 'ServiceManager',
     ];
 
-    public function configure()
+    protected function configure()
     {
         $this
             ->setName('lts:patch')
@@ -80,7 +80,7 @@ class Patch extends Command
         }
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $patchfile = $input->getArgument('patchfile');
         $target    = $input->getArgument('target');

@@ -28,7 +28,7 @@ class Components extends Command
         return $this;
     }
 
-    public function configure()
+    protected function configure()
     {
         $this
             ->setName('lts:components')
@@ -39,7 +39,7 @@ class Components extends Command
             );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         array_walk($this->components, function ($component) use ($output) {
             $output->writeln($component);

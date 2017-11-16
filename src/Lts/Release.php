@@ -41,7 +41,7 @@ class Release extends Command
         return $this;
     }
 
-    public function configure()
+    protected function configure()
     {
         $this
             ->setName('lts:release')
@@ -93,7 +93,7 @@ class Release extends Command
      *
      * Changes directory to the basePath prior to tagging each component.
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $minor    = $input->getArgument('version');
         $version  = $minor;

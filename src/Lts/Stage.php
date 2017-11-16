@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Stage extends Command
 {
-    public function configure()
+    protected function configure()
     {
         $this
             ->setName('lts:stage')
@@ -65,7 +65,7 @@ class Stage extends Command
         }
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $minor      = $input->getArgument('version');
         $patchfiles = $input->getArgument('patchfile');

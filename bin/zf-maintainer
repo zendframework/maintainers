@@ -17,6 +17,7 @@ $application = new Application();
 $application->add(new \ZF\Maintainer\ChangelogBump());
 $application->add(new \ZF\Maintainer\CreatePackage());
 $application->add(new \ZF\Maintainer\RebaseDocTemplates());
+$application->add(new \ZF\Maintainer\SyncRepos());
 
 $application->add((new \ZF\Maintainer\Lts\Components())->setComponents($components));
 $application->add(new \ZF\Maintainer\Lts\Patch());

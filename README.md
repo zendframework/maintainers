@@ -63,6 +63,7 @@ This script currently has the following actions:
   CHANGELOG version for the current component;
 - `create-package <name>` - creates a new package from templates;
 - `lts:components` - lists LTS components, one per line;
+- `lts:release` - tags a new LTS maintenance release of all components;
 - `rebase-doc-template <path>` - rebases all templates for specified package.
 
 To get more information about each command you can call them with `--help` flag.

@@ -1,15 +1,24 @@
 <?php
-namespace ZF\Maintainer;
+/**
+ * @see       https://github.com/zendframework/maintainers for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/maintainers/blob/master/LICENSE.md New BSD License
+ */
 
+namespace ZF\Maintainer\Lts;
+
+use InvalidArgumentException;
 use RuntimeException;
-use Zend\Console\Adapter\AdapterInterface as Console;
-use Zend\Console\ColorInterface as Color;
-use ZF\Console\Route;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Release components.
  */
-class Release
+class Release extends Command
 {
     /**
      * List of components to release.
@@ -19,55 +28,63 @@ class Release
     private $components;
 
     /**
-     * Git executable.
-     *
-     * @var string
-     */
-    private $git;
-
-    /**
-     * Whether or not verbosity is currently enabled.
-     *
-     * @var bool
-     */
-    private $verbose = false;
-
-    /**
      * Lookup map of current version -> next version.
      *
      * @var array
      */
     private $versionIncrementMap = [];
 
-    /**
-     * Constructor.
-     *
-     * Determines the git executable to use if none is provided, raising an
-     * exception if none can be found.
-     *
-     * @param array $components
-     * @param null|string $git
-     * @throws RuntimeException when unable to discover git executable.
-     */
-    public function __construct(array $components, $git = null)
+    public function setComponents(array $components)
     {
         $this->components = $components;
 
-        if (null === $git) {
-            $git = shell_exec('which git');
-            $git = trim($git);
-        }
+        return $this;
+    }
 
-        if (empty($git)) {
-            throw new RuntimeException('Unable to discover git executable');
-        }
+    public function configure()
+    {
+        $this
+            ->setName('lts:release')
+            ->setDescription('Tag a new LTS maintenance release of all components')
+            ->setHelp(
+                'Tag a new LTS maintenance release of all components.'
+                . ' This command will check out a release branch based off the latest'
+                . ' maintenance release matching the provided minor release version'
+                . ' and tag the new release with no changes.'
+                . PHP_EOL . PHP_EOL
+                . '<info>USE THIS ONLY FOR TAGGING COMPONENTS WITH NO CHANGES.</info>'
+            )
+            ->addArgument(
+                'version',
+                InputArgument::REQUIRED,
+                'Minor version against which to create new release'
+            )
+            ->addOption(
+                'exclude',
+                'e',
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'Component to exclude from the release; typically those that had changes;'
+                   . ' allowed to use multiple times'
+            )
+            ->addOption(
+                'basePath',
+                'b',
+                InputOption::VALUE_REQUIRED,
+                'Path to component checkouts; if not specified, assumed to be the current working directory',
+                realpath(getcwd())
+            );
+    }
 
-        // If you use 'hub', git is a function
-        if (preg_match('/[ )(\}\{]/', $git)) {
-            $git = 'git';
-        }
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        parent::initialize($input, $output);
 
-        $this->git = $git;
+        $version = $input->getArgument('version');
+        if (! preg_match('/^(0|[1-9]\d*)\.\d+$/', $version)) {
+            throw new InvalidArgumentException(
+                'Invalid version provided'
+            );
+        }
     }
 
     /**
@@ -78,55 +95,45 @@ class Release
      * (with the exception of those in the exclude list).
      *
      * Changes directory to the basePath prior to tagging each component.
-     *
-     * @param Route $route
-     * @param Console $console
-     * @return int
      */
-    public function __invoke(Route $route, Console $console)
+    public function execute(InputInterface $input, OutputInterface $output)
     {
-        $minor   = $route->getMatchedParam('version');
+        $minor   = $input->getArgument('version');
         $version = $minor;
-        $exclude = $route->getMatchedParam('exclude');
-        $path    = $route->getMatchedParam('basePath');
-
-        $opts = $route->getMatches();
-        $this->verbose = $opts['verbose'] || $opts['v'];
-        $this->emit(sprintf("Using git: %s\n", $this->git), $console, Color::BLUE);
+        $exclude = $input->getOption('exclude');
+        $path    = $input->getOption('basePath');
 
         chdir($path);
         foreach ($this->components as $component) {
             if (in_array($component, $exclude, true)) {
-                $this->emit(sprintf("[SKIP] %s\n", $component), $console, Color::GREEN);
+                $output->writeln(sprintf('<info>[SKIP] %s</info>', $component));
                 continue;
             }
 
-            $this->emit(sprintf("[START] %s\n", $component), $console, Color::GREEN);
+            $output->writeln(sprintf('<info>[START] %s</info>', $component));
 
             if (! is_dir($component)) {
-                $console->writeLine(sprintf(
-                    '[ERROR] Component directory for "%s" does not exist!',
+                $output->writeln(sprintf(
+                    '<error>[ERROR] Component directory for "%s" does not exist!</error>',
                     $component
-                ), Color::WHITE, Color::RED);
+                ));
                 continue;
             }
 
             chdir($component);
-            $version = $this->tagComponent($component, $minor, $version, $console);
+            $version = $this->tagComponent($component, $minor, $version, $output);
             chdir($path);
 
-            $this->emit(sprintf(
-                '[DONE] %s tagged at version %s',
+            $output->writeln(sprintf(
+                '<info>[DONE] %s tagged at version %s</info>',
                 $component,
                 $version
-            ), $console, Color::GREEN);
+            ));
         }
 
-        $console->writeLine('');
-        $console->writeLine('[DONE] Please verify tags and push the following tag:', Color::GREEN);
-        $console->writeLine('       release-' . $version);
-
-        return 0;
+        $output->writeln('');
+        $output->writeln('<info>[DONE] Please verify tags and push the following tag:</info>');
+        $output->writeln('       release-' . $version);
     }
 
     /**
@@ -144,72 +151,64 @@ class Release
      * @param string $component
      * @param string $minor Minor version
      * @param string $version Latest release on current minor branch
-     * @param Console $console
+     * @param OutputInterface $output
+     * @return string
      */
-    private function tagComponent($component, $minor, $version, Console $console)
+    private function tagComponent($component, $minor, $version, OutputInterface $output)
     {
-        $currentVersion = $this->detectVersion($version, $minor, $console);
+        $currentVersion = $this->detectVersion($version, $minor, $output);
         $newVersion     = $this->incrementVersion($currentVersion);
         $baseCommit     = $this->getBaseCommit($currentVersion);
         $branch         = $this->getBranchName($currentVersion);
 
-        if (0 !== $this->exec(sprintf(
-            '%s checkout -b %s %s',
-            $this->git,
-            $branch,
-            $baseCommit
-        ), $console)) {
-            $console->writeLine(sprintf(
-                '[ERROR][%s] Could not checkout new branch "%s" from base "%s"!',
+        if (0 !== $this->exec(sprintf('git checkout -b %s %s', $branch, $baseCommit), $output)) {
+            $output->writeln(sprintf(
+                '<error>[ERROR][%s] Could not checkout new branch "%s" from base "%s"!</error>',
                 $component,
                 $branch,
                 $baseCommit
-            ), Color::WHITE, Color::RED);
+            ));
+
             return $currentVersion;
         }
 
         if ('zend-version' === $component
-            && ! $this->updateVersionClass($newVersion, $console)
+            && ! $this->updateVersionClass($newVersion, $output)
         ) {
             return $currentVersion;
         }
 
         if (0 !== $this->exec(sprintf(
-            '%s tag -s -m "%s %s" release-%s',
-            $this->git,
+            'git tag -s -m "%s %s" release-%s',
             $component,
             $newVersion,
             $newVersion
-        ), $console)) {
-            $console->writeLine(sprintf(
-                '[ERROR][%s] Could not tag new release "%s"!',
+        ), $output)) {
+            $output->writeln(sprintf(
+                '<error>[ERROR][%s] Could not tag new release "%s"!</error>',
                 $component,
                 $newVersion
-            ), Color::WHITE, Color::RED);
+            ));
+
             return $currentVersion;
         }
 
-        if (0 !== $this->exec(sprintf(
-            '%s checkout master',
-            $this->git
-        ), $console)) {
-            $console->writeLine(sprintf(
-                '[ERROR][%s] Could not checkout master on completion!',
+        if (0 !== $this->exec('git checkout master', $output)) {
+            $output->writeln(sprintf(
+                '<error>[ERROR][%s] Could not checkout master on completion!</error>',
                 $component
-            ), Color::WHITE, Color::RED);
+            ));
+
             return $currentVersion;
         }
 
-        if (0 !== $this->exec(sprintf(
-            '%s branch -D %s',
-            $this->git,
-            $branch
-        ), $console)) {
-            $console->writeLine(sprintf(
+        if (0 !== $this->exec(sprintf('git branch -D %s', $branch), $output)) {
+            $output->writeln(sprintf(
                 '[ERROR][%s] Could not remove branch "%s" on completion!',
                 $component,
                 $branch
-            ), Color::WHITE, Color::RED);
+            ));
+
             return $currentVersion;
         }
 
@@ -227,22 +226,21 @@ class Release
      *
      * @param string $version
      * @param string $minor
-     * @param Console $console
+     * @param OutputInterface $output
      * @return string
      */
-    private function detectVersion($version, $minor, Console $console)
+    private function detectVersion($version, $minor, OutputInterface $output)
     {
         if ($version !== $minor) {
             return $version;
         }
 
         $command = sprintf(
-            '%s tag | grep "release-%s" | sort -V | tail -n 1 | grep -Po "[1-9][0-9]*\.[0-9]+\.[0-9]+"',
-            $this->git,
+            'git tag | grep "release-%s" | sort -V | tail -n 1 | grep -Po "[1-9][0-9]*\.[0-9]+\.[0-9]+"',
             $minor
         );
-        $this->emit('Determining most recent version from tags, using:', $console, Color::BLUE);
-        $this->emit('    ' . $command, $console, Color::BLUE);
+        $output->writeln('<comment>Determining most recent version from tags, using:</comment>');
+        $output->writeln('    ' . $command);
 
         $version = shell_exec($command);
 
@@ -250,7 +248,7 @@ class Release
             $version = sprintf('%s.0', $minor);
         }
 
-        $this->emit('Detected version: ' . $version, $console, Color::BLUE);
+        $output->writeln(sprintf('<comment>Detected version: %s</comment>', $version));
 
         return $version;
     }
@@ -328,13 +326,14 @@ class Release
      * executing it.
      *
      * @param string $command
-     * @param Console $console
+     * @param OutputInterface $output
      * @return int The return value from executing the command.
      */
-    private function exec($command, Console $console)
+    private function exec($command, OutputInterface $output)
     {
-        $this->emit(sprintf("Executing command: %s\n", $command), $console, Color::BLUE);
-        $this->emit(exec($command, $output, $return), $console);
+        $output->writeln(sprintf('<info>Executing command: %s</info>', $command));
+        $output->writeln(exec($command, $output, $return));
+
         return $return;
     }
 
@@ -348,48 +347,22 @@ class Release
      * On completion, it commits the file and returns.
      *
      * @param string $version
-     * @param Console $console
+     * @param OutputInterface $output
      * @return bool Whether or not the operations succeeded.
      */
-    private function updateVersionClass($version, Console $console)
+    private function updateVersionClass($version, OutputInterface $output)
     {
         $repl     = sprintf("    const VERSION = '%s';", $version);
         $contents = file_get_contents('src/Version.php');
         $contents = preg_replace('/^\s+const VERSION = \'[^\']+\';/m', $repl, $contents);
         file_put_contents('src/Version.php', $contents);
 
-        if (0 !== $this->exec(sprintf(
-            '%s commit -a -m "Bump to version %s"',
-            $this->git,
-            $version
-        ), $console)) {
-            $console->writeLine(sprintf(
-                '[ERROR][%s] Could not commit updated Version class!',
-                $component
-            ), Color::WHITE, Color::RED);
+        if (0 !== $this->exec(sprintf('git commit -a -m "Bump to version %s"', $version), $output)) {
+            $output->writeln('<error>[ERROR][zend-version] Could not commit updated Version class!</error>');
+
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Emit a message.
-     *
-     * If verbosity is disabled, does nothing.
-     *
-     * If verbosity is enabled, writes the line using the provided $console,
-     * and in the provided $color.
-     *
-     * @param string $message
-     * @param Console $console
-     * @param int $color
-     */
-    private function emit($message, Console $console, $color = Color::WHITE)
-    {
-        if (! $this->verbose) {
-            return;
-        }
-        $console->writeLine($message, $color);
     }
 }

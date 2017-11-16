@@ -47,7 +47,7 @@ class ChangelogBump extends Command
     {
         parent::initialize($input, $output);
 
-        $base = $input->getOption('`base');
+        $base = $input->getOption('base');
         if (! in_array($base, ['master', 'develop'], true)) {
             throw new InvalidArgumentException(
                 'Invalid base branch provided; "master" and "develop" are only allowed'

@@ -69,8 +69,8 @@ simultaneously with the same new LTS version. The script `bin/maintainer.php` wi
 tagging those:
 
 ```console
-$ bin/maintainer.php lts-release 2.4 \
-> --exclude=zend-http,zend-mvc \
+$ bin/zf-maintainer lts:release 2.4 \
+> --exclude=zend-http --exclude=zend-mvc \
 > --basePath=path/above/component/checkouts
 ```
 

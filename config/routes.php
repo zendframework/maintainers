@@ -1,7 +1,6 @@
 <?php // @codingStandardsIgnoreFile
 use Zend\Validator\Callback as CallbackValidator;
 use Zend\Validator\File\Exists as FileExistsValidator;
-use Zend\Validator\Regex as RegexValidator;
 use ZF\Console\Filter\Explode as ExplodeFilter;
 
 $fileExists       = new FileExistsValidator();
@@ -10,25 +9,6 @@ $minorVersionValidator = new CallbackValidator(function ($value) {
 });
 
 return [
-    [
-        'name'                 => 'lts-patch',
-        'route'                => '--patchfile= --target= --component=',
-        'description'          => 'Rewrite a patch made against a component so that it may be applied against the monolithic ZF2 repository.',
-        'short_description'    => 'Rewrite a component patch so it may be applied against the ZF2 repo.',
-        'options_descriptions' => [
-            '--patchfile' => 'Path to the component patchfile to use as the source patch.',
-            '--target'    => 'Filename to which to write the rewritten patchfile.',
-            '--component' => 'Name of the component (e.g., zend-view, zend-inputfilter, etc) against which the patch was made.',
-        ],
-        'validators' => [
-            'patchfile' => new FileExistsValidator(),
-            'target' => new CallbackValidator(function ($value) {
-                return is_dir(dirname($value));
-            }),
-            'component' => new RegexValidator('/^zend-[a-z-]+$/'),
-        ],
-        'handler' => 'ZF\Maintainer\RewritePatch',
-    ],
     [
         'name'                 => 'lts-stage',
         'route'                => '<version> --patchfile= [--verbose|-v]',

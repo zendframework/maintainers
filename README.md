@@ -63,6 +63,7 @@ This script currently has the following actions:
   CHANGELOG version for the current component;
 - `create-package <name>` - creates a new package from templates;
 - `lts:components` - lists LTS components, one per line;
+- `lts:patch` - rewrites a component patch so it may be applied against the ZF2 repo;
 - `lts:release` - tags a new LTS maintenance release of all components;
 - `rebase-doc-template <path>` - rebases all templates for specified package.
 

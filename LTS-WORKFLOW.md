@@ -93,11 +93,11 @@ Obviously, substitute the correct release tag!
 
 ## 4. Backport the patch to the ZF2 repository
 
-To backport a patch, use the `lts-patch` target of the `maintainer.php` command:
+To backport a patch, use the `lts:patch` target of the `bin/zf-maintainer` command:
 
 ```console
 $ cd path/to/zf2/checkout
-$ path/to/maintainers/bin/maintainer.php lts-patch \
+$ path/to/maintainers/bin/zf-maintainer lts:patch \
 > --component=zend-view \
 > --patchfile=path/to/zend-view/checkout/name-of-patchfile.patch \
 > --target=./name-of-patchfile.patch

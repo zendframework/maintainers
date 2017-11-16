@@ -10,10 +10,14 @@ require __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 
+$components = include __DIR__ . '/../config/components.php';
+
 $application = new Application();
 
 $application->add(new \ZF\Maintainer\ChangelogBump());
 $application->add(new \ZF\Maintainer\CreatePackage());
 $application->add(new \ZF\Maintainer\RebaseDocTemplates());
+
+$application->add((new \ZF\Maintainer\Lts\Components())->setComponents($components));
 
 $application->run();

@@ -33,12 +33,6 @@ return [
         ],
     ],
     [
-        'name'                 => 'lts-components',
-        'route'                => '',
-        'description'          => 'List LTS components, one per line. This can be useful when looping in console scripts: for COMPONENT in $(maintainer.php components | grep "^zend-");do done',
-        'short_description'    => 'List LTS components, one per line.',
-    ],
-    [
         'name'                 => 'lts-patch',
         'route'                => '--patchfile= --target= --component=',
         'description'          => 'Rewrite a patch made against a component so that it may be applied against the monolithic ZF2 repository.',

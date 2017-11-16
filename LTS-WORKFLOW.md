@@ -80,11 +80,11 @@ already be tagged.
 Verify that the process finished successfully; if it did not, find out what went wrong. When it
 completes successfully, it will print out the new release version tagged.
 
-To push all LTS repos, use the `lts-components` target of the `bin/maintainers.php` command:
+To push all LTS repos, use the `lts:components` target of the `bin/zf-maintainer` command:
 
 ```console
 $ cd path/above/component/checkouts
-$ for COMPONENT in $(path/to/maintainers/bin/maintainer.php lts-components | grep '^zend-');do
+$ for COMPONENT in $(path/to/maintainers/bin/zf-maintainer lts:components | grep '^zend-');do
 > (cd ${COMPONENT} ; git push origin release-2.4.3:release-2.4.3)
 > done
 ```

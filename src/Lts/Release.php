@@ -59,10 +59,9 @@ class Release extends Command
                 InputArgument::REQUIRED,
                 'Minor version against which to create new release'
             )
-            ->addOption(
+            ->addArgument(
                 'exclude',
-                'e',
-                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                InputArgument::REQUIRED | InputArgument::IS_ARRAY,
                 'Component to exclude from the release; typically those that had changes;'
                    . ' allowed to use multiple times'
             )
@@ -81,9 +80,7 @@ class Release extends Command
 
         $version = $input->getArgument('version');
         if (! preg_match('/^(0|[1-9]\d*)\.\d+$/', $version)) {
-            throw new InvalidArgumentException(
-                'Invalid version provided'
-            );
+            throw new InvalidArgumentException('Invalid version provided');
         }
     }
 
@@ -242,7 +239,7 @@ class Release extends Command
         $output->writeln('<comment>Determining most recent version from tags, using:</comment>');
         $output->writeln('    ' . $command);
 
-        $version = shell_exec($command);
+        $version = trim(shell_exec($command));
 
         if (empty($version)) {
             $version = sprintf('%s.0', $minor);
@@ -331,8 +328,8 @@ class Release extends Command
      */
     private function exec($command, OutputInterface $output)
     {
-        $output->writeln(sprintf('<info>Executing command: %s</info>', $command));
-        $output->writeln(exec($command, $output, $return));
+        $output->writeln(sprintf('Executing command: <comment>%s</comment>', $command));
+        $output->writeln(exec($command, $out, $return));
 
         return $return;
     }

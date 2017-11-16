@@ -21,5 +21,6 @@ $application->add(new \ZF\Maintainer\RebaseDocTemplates());
 $application->add((new \ZF\Maintainer\Lts\Components())->setComponents($components));
 $application->add(new \ZF\Maintainer\Lts\Patch());
 $application->add((new \ZF\Maintainer\Lts\Release())->setComponents($components));
+$application->add(new \ZF\Maintainer\Lts\Stage());
 
 $application->run();

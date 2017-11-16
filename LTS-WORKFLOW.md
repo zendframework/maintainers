@@ -110,7 +110,7 @@ Repeat the above for each component that has patches you need to release.
 Next, you need to create a temporary release branch and apply the patch.
 
 ```console
-$ path/to/maintainers/bin/mainter.php lts-stage 2.4 \
+$ path/to/maintainers/bin/zf-maintainer lts:stage 2.4 \
 > --patchfile=./name-of-patchfile.patch
 ```
 
@@ -122,12 +122,12 @@ This script will apply the patchfile, and then create a commit that:
 
 > ### Specifying multiple patchfiles
 >
-> If you created multiple patch files and want to apply them all, you can specify a comma-delimited
-> list of filenames to the `--patchfile` argument:
+> If you created multiple patch files and want to apply them all, you can multiple
+> `--patchfile` arguments:
 >
 > ```console
-> $ path/to/maintainers/bin/mainter.php lts-stage 2.4 \
-> > --patchfile=./name-of-patchfile.patch,./another-patchfile.patch,./etc.patch
+> $ path/to/maintainers/bin/zf-maintainer lts:stage 2.4 \
+> > --patchfile=./name-of-patchfile.patch --patchfile=./another-patchfile.patch --patchfile=./etc.patch
 > ```
 
 Check for errors applying the patch(es) (there should not be any), and run the tests specific to the
@@ -147,7 +147,7 @@ $ ../vendor/bin/phpunit ZendTest/View/Helper/ServerUrl.php
 > If you observe failing tests when there shouldn't be, run `composer update` and then re-run the
 > tests.
 
-At this point, you can now tag; the `lts-stage` will provide you with the `git tag` command to
+At this point, you can now tag; the `lts:stage` will provide you with the `git tag` command to
 use. You can then push the tag and delete the branch:
 
 ```console

@@ -151,7 +151,7 @@ class ChangelogBump extends Command
     private function exec($command, OutputInterface $output)
     {
         $output->writeln(sprintf('Executing command: <comment>%s</comment>', $command));
-        $output->writeln(exec($command, $output, $return));
+        $output->writeln(exec($command, $out, $return));
 
         return $return;
     }

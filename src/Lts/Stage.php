@@ -1,114 +1,110 @@
 <?php
-namespace ZF\Maintainer;
+/**
+ * @see       https://github.com/zendframework/maintainers for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/maintainers/blob/master/LICENSE.md New BSD License
+ */
 
-use RuntimeException;
-use Zend\Console\Adapter\AdapterInterface as Console;
-use Zend\Console\ColorInterface as Color;
-use ZF\Console\Route;
+namespace ZF\Maintainer\Lts;
+
+use InvalidArgumentException;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Create a new LTS release based on the previous LTS release and provided patchfiles.
  */
-class ZfLtsRelease
+class Stage extends Command
 {
-    /**
-     * Git executable.
-     *
-     * @var string
-     */
-    private $git;
-
-    /**
-     * Whether or not verbosity is currently enabled.
-     *
-     * @var bool
-     */
-    private $verbose = false;
-
-    /**
-     * Constructor.
-     *
-     * Determines the git executable to use if none is provided, raising an
-     * exception if none can be found.
-     *
-     * @param null|string $git
-     * @throws RuntimeException when unable to discover git executable.
-     */
-    public function __construct($git = null)
+    public function configure()
     {
-        if (null === $git) {
-            $git = shell_exec('which git');
-            $git = trim($git);
-        }
-
-        if (empty($git)) {
-            throw new RuntimeException('Unable to discover git executable');
-        }
-
-        // If you use 'hub', git is a function
-        if (preg_match('/[ )(\}\{]/', $git)) {
-            $git = 'git';
-        }
-
-        $this->git = $git;
+        $this
+            ->setName('lts:stage')
+            ->setDescription('Stage a new LTS release by applying the given patchfile(s)')
+            ->setHelp(
+                'Checkout a temporary branch based on the last release of the given minor version,'
+                . ' and apply the patchfile(s) provided.'
+                . PHP_EOL . PHP_EOL
+                . 'If you wish to apply multiple patches, specify them to the --patchfile argument:'
+                . PHP_EOL . PHP_EOL
+                . '  $ zf-maintainer lts:stage 2.4 --patchfile=0001.patch --patchfile=0002.patch --patchfile=0003.patch'
+                . PHP_EOL . PHP_EOL
+                . 'Patchfiles are applied in the order provided.'
+            )
+            ->addArgument(
+                'version',
+                InputArgument::REQUIRED,
+                'Minor version against which to create new release'
+            )
+            ->addArgument(
+                'patchfile',
+                InputArgument::REQUIRED | InputArgument::IS_ARRAY,
+                'Path to the patchfile to apply; allowed to use multiple times'
+            );
     }
 
-    /**
-     * Tag a new ZF2 LTS release.
-     *
-     * @param Route $route
-     * @param Console $console
-     * @return int
-     */
-    public function __invoke(Route $route, Console $console)
+    protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $opts       = $route->getMatches();
-        $minor      = $opts['version'];
-        $patchfiles = $opts['patchfile'];
+        parent::initialize($input, $output);
 
-        $this->verbose = $opts['verbose'] || $opts['v'];
+        $version = $input->getArgument('version');
+        if (! preg_match('/^(0|[1-9]\d*)\.\d+$/', $version)) {
+            throw new InvalidArgumentException('Invalid version provided');
+        }
 
-        $currentVersion = $this->detectVersion($minor, $console);
+        $patchfiles = $input->getArgument('patchfile');
+        foreach ($patchfiles as $patchfile) {
+            if (! file_exists($patchfile)) {
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid patchfile; file %s does not exist',
+                    $patchfile
+                ));
+            }
+        }
+    }
+
+    public function execute(InputInterface $input, OutputInterface $output)
+    {
+        $minor      = $input->getArgument('version');
+        $patchfiles = $input->getArgument('patchfile');
+
+        $currentVersion = $this->detectVersion($minor, $output);
 
         // checkout release-$minor branch based on release-$currentVersion
         if (0 !== $this->exec(sprintf(
-            '%s checkout -b release-%s release-%s',
-            $this->git,
+            'git checkout -b release-%s release-%s',
             $minor,
             $currentVersion
-        ), $console)) {
-            $console->writeLine(sprintf(
-                '[ERROR] Could not create new branch release-%s based on tag release-%s!',
+        ), $output)) {
+            $output->writeln(sprintf(
+                '<error>[ERROR] Could not create new branch release-%s based on tag release-%s!</error>',
                 $minor,
                 $currentVersion
-            ), Color::WHITE, Color::RED);
-            return 1;
+            ));
+
+            return;
         }
 
         // apply patchfile
         foreach ($patchfiles as $patchfile) {
-            if (0 !== $this->exec(sprintf(
-                '%s am < %s',
-                $this->git,
-                $patchfile
-            ), $console)) {
-                $console->writeLine(sprintf(
-                    '[ERROR] Could not cleanly apply patchfile "%s"!',
+            if (0 !== $this->exec(sprintf('git am < %s', $patchfile), $output)) {
+                $output->writeln(sprintf(
+                    '<error>[ERROR] Could not cleanly apply patchfile "%s"!</error>',
                     $patchfile
-                ), Color::WHITE, Color::RED);
-                return 1;
+                ));
+
+                return;
             }
         }
 
         // Create message for release
         $message = $this->getCommitMessages($currentVersion);
         if (false === $message) {
-            $console->writeLine(
-                '[ERROR] Could not retrieve patch messages!',
-                Color::WHITE,
-                Color::RED
-            );
-            return 1;
+            $output->writeln('<error>[ERROR] Could not retrieve patch messages!</error>');
+
+            return;
         }
 
         $nextVersion = $this->incrementVersion($currentVersion);
@@ -123,7 +119,7 @@ class ZfLtsRelease
         $this->updateChangelog($nextVersion, $message);
 
         // Commit version information
-        $this->commitVersionBump($nextVersion, $console);
+        $this->commitVersionBump($nextVersion, $output);
 
         $message = sprintf(
             "Zend Framework %s\n\n%s",
@@ -131,11 +127,8 @@ class ZfLtsRelease
             $message
         );
 
-        $console->writeLine(
-            '[DONE] Please verify the patch, and then execute:',
-            Color::GREEN
-        );
-        $console->writeLine(sprintf(
+        $output->writeln('<info>[DONE] Please verify the patch, and then execute:</info>');
+        $output->writeln(sprintf(
             '    git tag -s -m "%s" release-%s',
             $message,
             $nextVersion
@@ -149,28 +142,25 @@ class ZfLtsRelease
      * the available tags matching the minor version.
      *
      * @param string $minor
-     * @param Console $console
+     * @param OutputInterface $output
      * @return string
      */
-    private function detectVersion($minor, Console $console)
+    private function detectVersion($minor, OutputInterface $output)
     {
         $command = sprintf(
-            '%s tag | grep "release-%s" | sort -V | tail -n 1 | grep -Po "[1-9][0-9]*\.[0-9]+\.[0-9]+"',
-            $this->git,
+            'git tag | grep "release-%s" | sort -V | tail -n 1 | grep -Po "[1-9][0-9]*\.[0-9]+\.[0-9]+"',
             $minor
         );
-        $this->emit('Determining most recent version from tags, using:', $console, Color::BLUE);
-        $this->emit('    ' . $command, $console, Color::BLUE);
+        $output->writeln('<comment>Determining most recent version from tags, using:</comment>');
+        $output->writeln('    ' . $command);
 
-        $version = shell_exec($command);
+        $version = trim(shell_exec($command));
 
         if (empty($version)) {
             $version = sprintf('%s.0', $minor);
         }
 
-        $version = trim($version);
-
-        $this->emit('Detected version: ' . $version, $console, Color::BLUE);
+        $output->writeln(sprintf('<comment>Detected version: %s</comment>', $version));
 
         return $version;
     }
@@ -183,11 +173,11 @@ class ZfLtsRelease
      */
     private function getCommitMessages($startVersion)
     {
-        exec(sprintf(
-            '%s log --oneline release-%s..HEAD',
-            $this->git,
-            $startVersion
-        ), $output, $return);
+        exec(
+            sprintf('git log --oneline release-%s..HEAD', $startVersion),
+            $output,
+            $return
+        );
 
         if (0 !== $return) {
             return false;
@@ -216,6 +206,7 @@ class ZfLtsRelease
 
         preg_match('/^(?P<minor>\d+\.\d+)\.(?P<patch>\d+)$/', $version, $matches);
         $patch = (int) $matches['patch'] + 1;
+
         return sprintf('%s.%d', $matches['minor'], $patch);
     }
 
@@ -278,16 +269,12 @@ class ZfLtsRelease
      * Commit the changes made to the VERSION constant, README, and CHANGELOG.
      *
      * @param string $version
-     * @param Console $console
+     * @param OutputInterface $output
      */
-    private function commitVersionBump($version, Console $console)
+    private function commitVersionBump($version, OutputInterface $output)
     {
-        if (0 !== $this->exec(sprintf(
-            '%s commit -a -m "Prepare for %s"',
-            $this->git,
-            $version
-        ), $console)) {
-            $console->writeLine('[ERROR] Could not commit version bump changes!', Color::WHITE, Color::RED);
+        if (0 !== $this->exec(sprintf('git commit -a -m "Prepare for %s"', $version), $output)) {
+            $output->writeln('<error>[ERROR] Could not commit version bump changes!</error>');
         }
     }
 
@@ -298,33 +285,14 @@ class ZfLtsRelease
      * executing it.
      *
      * @param string $command
-     * @param Console $console
+     * @param OutputInterface $output
      * @return int The return value from executing the command.
      */
-    private function exec($command, Console $console)
+    private function exec($command, OutputInterface $output)
     {
-        $this->emit(sprintf("Executing command: %s\n", $command), $console, Color::BLUE);
-        $this->emit(exec($command, $output, $return), $console);
-        return $return;
-    }
+        $output->writeln(sprintf('Executing command: <comment>%s</comment>', $command));
+        $output->writeln(exec($command, $out, $return));
 
-    /**
-     * Emit a message.
-     *
-     * If verbosity is disabled, does nothing.
-     *
-     * If verbosity is enabled, writes the line using the provided $console,
-     * and in the provided $color.
-     *
-     * @param string $message
-     * @param Console $console
-     * @param int $color
-     */
-    private function emit($message, Console $console, $color = Color::WHITE)
-    {
-        if (! $this->verbose) {
-            return;
-        }
-        $console->writeLine($message, $color);
+        return $return;
     }
 }

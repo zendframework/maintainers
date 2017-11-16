@@ -12,6 +12,7 @@ use Symfony\Component\Console\Application;
 
 $application = new Application();
 
+$application->add(new \ZF\Maintainer\ChangelogBump());
 $application->add(new \ZF\Maintainer\CreatePackage());
 $application->add(new \ZF\Maintainer\RebaseDocTemplates());
 

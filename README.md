@@ -59,6 +59,8 @@ to ensure dependencies are present. The tools are in the `bin/maintainers.php` s
 ### `bin/zf-maintainer`
 
 This script currently has the following actions:
+- `changelog-bump <version> [-b|--base <master|develop>]` - bumps the
+  CHANGELOG version for the current component;
 - `create-package <name>` - creates a new package from templates;
 - `rebase-doc-template <path>` - rebases all templates for specified package.
 

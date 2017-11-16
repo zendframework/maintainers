@@ -1,16 +1,12 @@
 <?php // @codingStandardsIgnoreFile
 use Zend\Validator\Callback as CallbackValidator;
 use Zend\Validator\File\Exists as FileExistsValidator;
-use Zend\Validator\InArray as InArrayValidator;
 use Zend\Validator\Regex as RegexValidator;
 use ZF\Console\Filter\Explode as ExplodeFilter;
 
 $fileExists       = new FileExistsValidator();
 $minorVersionValidator = new CallbackValidator(function ($value) {
     return preg_match('/^(0|[1-9][0-9]*)\.[0-9]+$/', $value);
-});
-$semanticVersionValidator = new CallbackValidator(function ($value) {
-    return preg_match('/^(0|[1-9][0-9]*)\.[0-9]+\.[0-9]+$/', $value);
 });
 
 return [
@@ -99,25 +95,5 @@ Patchfiles are applied in the order provided.
             'version' => $minorVersionValidator,
         ],
         'handler' => 'ZF\Maintainer\ZfLtsRelease',
-    ],
-    [
-        'name'                 => 'changelog-bump',
-        'route'                => '<version> [--base=] [--verbose|-v]',
-        'description'          => 'Checkout a temporary version/bump branch based on --base (defaults to
-master), and create a new CHANGELOG entry for the provided version.',
-        'short_description'    => 'Bump the CHANGELOG version for the current component.',
-        'options_descriptions' => [
-            '<version>'   => 'New CHANGELOG version to add.',
-            '--base'      => 'Branch against which to change the CHANGELOG version; can be one of "master" or "develop".',
-            '--verbose'   => 'Verbosity',
-        ],
-        'defaults' => [
-            'base' => 'master',
-        ],
-        'validators' => [
-            'base'    => new InArrayValidator(['haystack' => ['master', 'develop'], 'strict' => true]),
-            'version' => $semanticVersionValidator,
-        ],
-        'handler' => 'ZF\Maintainer\ChangelogBump',
     ],
 ];

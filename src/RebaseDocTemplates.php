@@ -112,7 +112,7 @@ class RebaseDocTemplates extends Command
             $this->updateMkDocs($yearReplacement);
         }
         $this->updateReadme($replacement);
-        $this->updateDocsLinks();
+        $this->updateDocsFiles();
     }
 
     private function updateDocs(array $replacement)
@@ -470,19 +470,20 @@ class RebaseDocTemplates extends Command
         file_put_contents($file, $content);
     }
 
-    private function updateDocsLinks()
+    private function updateDocsFiles()
     {
         $dir = sprintf('%s/docs/book/', $this->path);
 
         if (is_dir($dir)) {
             $dir = new RecursiveDirectoryIterator($dir);
             $iterator = new RecursiveIteratorIterator($dir);
-            $regex = new RegexIterator($iterator, '/^.+\.md$/', \RecursiveRegexIterator::GET_MATCH);
+            $regex = new RegexIterator($iterator, '/^.+\.(md|html)$/', \RecursiveRegexIterator::GET_MATCH);
 
             foreach ($regex as $file) {
                 $file = $file[0];
                 $content = file_get_contents($file);
                 $content = str_replace('zendframework.github.io', 'docs.zendframework.com', $content);
+                $content = preg_replace('/[ \t\r]+$/m', '', $content);
                 file_put_contents($file, $content);
             }
         }

@@ -59,11 +59,13 @@ class Release extends Command
                 InputArgument::REQUIRED,
                 'Minor version against which to create new release'
             )
-            ->addArgument(
+            ->addOption(
                 'exclude',
-                InputArgument::REQUIRED | InputArgument::IS_ARRAY,
+                'e',
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'Component to exclude from the release; typically those that had changes;'
-                   . ' allowed to use multiple times'
+                   . ' allowed to use multiple times',
+                []
             )
             ->addOption(
                 'basePath',
@@ -105,7 +107,7 @@ class Release extends Command
     {
         $minor    = $input->getArgument('version');
         $version  = $minor;
-        $excludes = $input->getArgument('exclude');
+        $excludes = $input->getOption('exclude');
         $path     = $input->getOption('basePath');
 
         chdir($path);

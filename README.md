@@ -63,7 +63,8 @@ This script currently has the following actions:
 - `lts:components` - lists LTS components, one per line;
 - `lts:patch -p|--patchfile=<patchfile> -t|--target=<target> -c|--component=<component>` -
   rewrites a component patch so it may be applied against the ZF2 repo;
-- `lts:release <version> <exclude> [-b|--basePath <base-path>]` - tags a new LTS maintenance release of all components;
+- `lts:release <version> -e|--exclude=<exclude> [-b|--basePath <base-path>]` -
+  tags a new LTS maintenance release of all components;
 - `lts:stage <version> <patchfile>` - stages a new LTS release by applying the given patchfile(s);
 - `rebase-doc-template <path>` - rebases all templates for specified package;
 - `sync-repos <github-token>` - synchronizes zendframework packages descriptions.

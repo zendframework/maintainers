@@ -9,8 +9,8 @@ namespace ZF\Maintainer\Lts;
 
 use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -37,19 +37,22 @@ class Patch extends Command
                 'Rewrite a patch made against a component so that it may be applied'
                 . ' against the monolithic ZF2 repository.'
             )
-            ->addArgument(
+            ->addOption(
                 'patchfile',
-                InputArgument::REQUIRED,
+                'p',
+                InputOption::VALUE_REQUIRED,
                 'Path to the component patchfile to use as the source patch'
             )
-            ->addArgument(
+            ->addOption(
                 'target',
-                InputArgument::REQUIRED,
+                't',
+                InputOption::VALUE_REQUIRED,
                 'Filename to which to write the rewritten patchfile'
             )
-            ->addArgument(
+            ->addOption(
                 'component',
-                InputArgument::REQUIRED,
+                'c',
+                InputOption::VALUE_REQUIRED,
                 'Name of the component (e.g., zend-view, zend-inputfilter, etc) against which the patch was made'
             );
     }
@@ -58,33 +61,36 @@ class Patch extends Command
     {
         parent::initialize($input, $output);
 
-        $patchfile = $input->getArgument('patchfile');
-        if (! file_exists($patchfile)) {
+        $patchfile = $input->getOption('patchfile');
+        if (! $patchfile || ! file_exists($patchfile)) {
             throw new InvalidArgumentException(sprintf(
-                'Invalid patchfile; file %s does not exist',
+                'Invalid patchfile; file "%s" does not exist',
                 $patchfile
             ));
         }
 
-        $target = $input->getArgument('target');
-        if (! is_dir(dirname($target))) {
+        $target = $input->getOption('target');
+        if (! $target || ! is_dir(dirname($target))) {
             throw new InvalidArgumentException(sprintf(
-                'Invalid target; directory %s does not exist',
+                'Invalid target; directory "%s" does not exist',
                 dirname($target)
             ));
         }
 
-        $component = $input->getArgument('component');
+        $component = $input->getOption('component');
         if (! preg_match('/^zend-[a-z-]+$/', $component)) {
-            throw new InvalidArgumentException('Invalid component name');
+            throw new InvalidArgumentException(sprintf(
+                'Invalid component name: "%s"',
+                $component
+            ));
         }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $patchfile = $input->getArgument('patchfile');
-        $target    = $input->getArgument('target');
-        $component = $input->getArgument('component');
+        $patchfile = $input->getOption('patchfile');
+        $target    = $input->getOption('target');
+        $component = $input->getOption('component');
 
         if ($component === 'zend-i18n-resources') {
             $this->rewriteResources($patchfile, $target);

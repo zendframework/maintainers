@@ -82,7 +82,10 @@ class Release extends Command
 
         $version = $input->getArgument('version');
         if (! preg_match('/^(0|[1-9]\d*)\.\d+$/', $version)) {
-            throw new InvalidArgumentException('Invalid version provided');
+            throw new InvalidArgumentException(sprintf(
+                'Invalid version provided: "%s"',
+                $version
+            ));
         }
 
         $path = $input->getOption('basePath');

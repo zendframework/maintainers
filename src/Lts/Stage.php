@@ -11,6 +11,7 @@ use InvalidArgumentException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -38,9 +39,10 @@ class Stage extends Command
                 InputArgument::REQUIRED,
                 'Minor version against which to create new release'
             )
-            ->addArgument(
+            ->addOption(
                 'patchfile',
-                InputArgument::REQUIRED | InputArgument::IS_ARRAY,
+                'p',
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 'Path to the patchfile to apply; allowed to use multiple times'
             );
     }
@@ -54,7 +56,11 @@ class Stage extends Command
             throw new InvalidArgumentException('Invalid version provided');
         }
 
-        $patchfiles = $input->getArgument('patchfile');
+        $patchfiles = $input->getOption('patchfile');
+        if (! $patchfiles) {
+            throw new InvalidArgumentException('Missing patchfile option; required at least one patchfile');
+        }
+
         foreach ($patchfiles as $patchfile) {
             if (! file_exists($patchfile)) {
                 throw new InvalidArgumentException(sprintf(
@@ -68,7 +74,7 @@ class Stage extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $minor      = $input->getArgument('version');
-        $patchfiles = $input->getArgument('patchfile');
+        $patchfiles = $input->getOption('patchfile');
 
         $currentVersion = $this->detectVersion($minor, $output);
 

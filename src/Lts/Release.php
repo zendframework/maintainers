@@ -103,11 +103,17 @@ class Release extends Command
         chdir($path);
         foreach ($this->components as $component) {
             if (in_array($component, $excludes, true)) {
-                $output->writeln(sprintf('<info>[SKIP] %s</info>', $component));
+                $output->writeln(
+                    sprintf('<info>[SKIP] %s</info>', $component),
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
                 continue;
             }
 
-            $output->writeln(sprintf('<info>[START] %s</info>', $component));
+            $output->writeln(
+                sprintf('<info>[START] %s</info>', $component),
+                OutputInterface::VERBOSITY_VERBOSE
+            );
 
             if (! is_dir($component)) {
                 $output->writeln(sprintf(
@@ -121,11 +127,10 @@ class Release extends Command
             $version = $this->tagComponent($component, $minor, $version, $output);
             chdir($path);
 
-            $output->writeln(sprintf(
-                '<info>[DONE] %s tagged at version %s</info>',
-                $component,
-                $version
-            ));
+            $output->writeln(
+                sprintf('<info>[DONE] %s tagged at version %s</info>', $component, $version),
+                OutputInterface::VERBOSITY_VERBOSE
+            );
         }
 
         $output->writeln('');
@@ -236,8 +241,14 @@ class Release extends Command
             'git tag | grep "release-%s" | sort -V | tail -n 1 | grep -Po "[1-9][0-9]*\.[0-9]+\.[0-9]+"',
             $minor
         );
-        $output->writeln('<comment>Determining most recent version from tags, using:</comment>');
-        $output->writeln('    ' . $command);
+        $output->writeln(
+            '<comment>Determining most recent version from tags, using:</comment>',
+            OutputInterface::VERBOSITY_VERBOSE
+        );
+        $output->writeln(
+            '    ' . $command,
+            OutputInterface::VERBOSITY_VERBOSE
+        );
 
         $version = trim(shell_exec($command));
 
@@ -245,7 +256,10 @@ class Release extends Command
             $version = sprintf('%s.0', $minor);
         }
 
-        $output->writeln(sprintf('<comment>Detected version: %s</comment>', $version));
+        $output->writeln(
+            sprintf('<comment>Detected version: %s</comment>', $version),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
 
         return $version;
     }
@@ -328,8 +342,14 @@ class Release extends Command
      */
     private function exec($command, OutputInterface $output)
     {
-        $output->writeln(sprintf('Executing command: <comment>%s</comment>', $command));
-        $output->writeln(exec($command, $out, $return));
+        $output->writeln(
+            sprintf('Executing command: <comment>%s</comment>', $command),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
+        $output->writeln(
+            exec($command, $out, $return),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
 
         return $return;
     }

@@ -150,8 +150,14 @@ class ChangelogBump extends Command
      */
     private function exec($command, OutputInterface $output)
     {
-        $output->writeln(sprintf('Executing command: <comment>%s</comment>', $command));
-        $output->writeln(exec($command, $out, $return));
+        $output->writeln(
+            sprintf('Executing command: <comment>%s</comment>', $command),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
+        $output->writeln(
+            exec($command, $out, $return),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
 
         return $return;
     }

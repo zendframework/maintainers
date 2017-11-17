@@ -151,8 +151,14 @@ class Stage extends Command
             'git tag | grep "release-%s" | sort -V | tail -n 1 | grep -Po "[1-9][0-9]*\.[0-9]+\.[0-9]+"',
             $minor
         );
-        $output->writeln('<comment>Determining most recent version from tags, using:</comment>');
-        $output->writeln('    ' . $command);
+        $output->writeln(
+            '<comment>Determining most recent version from tags, using:</comment>',
+            OutputInterface::VERBOSITY_VERBOSE
+        );
+        $output->writeln(
+            '    ' . $command,
+            OutputInterface::VERBOSITY_VERBOSE
+        );
 
         $version = trim(shell_exec($command));
 
@@ -160,7 +166,10 @@ class Stage extends Command
             $version = sprintf('%s.0', $minor);
         }
 
-        $output->writeln(sprintf('<comment>Detected version: %s</comment>', $version));
+        $output->writeln(
+            sprintf('<comment>Detected version: %s</comment>', $version),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
 
         return $version;
     }
@@ -290,8 +299,14 @@ class Stage extends Command
      */
     private function exec($command, OutputInterface $output)
     {
-        $output->writeln(sprintf('Executing command: <comment>%s</comment>', $command));
-        $output->writeln(exec($command, $out, $return));
+        $output->writeln(
+            sprintf('Executing command: <comment>%s</comment>', $command),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
+        $output->writeln(
+            exec($command, $out, $return),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
 
         return $return;
     }

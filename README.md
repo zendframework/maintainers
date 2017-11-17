@@ -67,7 +67,8 @@ This script currently has the following actions:
   tags a new LTS maintenance release of all components;
 - `lts:stage <version> -p|--patchfile=<patchfile>` - stages a new LTS release
   by applying the given patchfile(s);
-- `rebase-doc-template <path>` - rebases all templates for specified package;
+- `rebase-doc-template [<path>]` - rebases all templates in package,
+  by default current directory is used;
 - `sync-repos <github-token>` - synchronizes zendframework packages descriptions.
 
 To get more information about each command you can call them with `--help` flag.

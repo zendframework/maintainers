@@ -7,6 +7,7 @@
 
 namespace ZF\Maintainer;
 
+use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -53,9 +54,30 @@ class RebaseDocTemplates extends Command
             )
             ->addArgument(
                 'path',
-                InputArgument::REQUIRED,
-                'Path to the package (often ".").'
+                InputArgument::OPTIONAL,
+                'Path to the package; if not specified, assumed to be the current working directory',
+                realpath(getcwd())
             );
+    }
+
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        parent::initialize($input, $output);
+
+        $path = $input->getArgument('path');
+        if (! is_dir($path)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid package path provided; directory "%s" does not exist',
+                $path
+            ));
+        }
+
+        if (! file_exists(sprintf('%s/composer.json', $path))) {
+            throw new InvalidArgumentException(sprintf(
+                'Cannot locate composer.json file in directory "%s"',
+                $path
+            ));
+        }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -63,15 +85,6 @@ class RebaseDocTemplates extends Command
         $this->path = $input->getArgument('path');
 
         $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
-
-        if (! is_dir($this->path)) {
-            $errOutput->writeln(sprintf(
-                '<error>Invalid path to the package: "%s"</error>',
-                $this->path
-            ));
-
-            return;
-        }
 
         list($org, $repo) = $this->getOrg();
 

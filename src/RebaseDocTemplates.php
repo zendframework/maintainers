@@ -10,6 +10,7 @@ namespace ZF\Maintainer;
 use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use RecursiveRegexIterator;
 use RegexIterator;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
@@ -477,7 +478,7 @@ class RebaseDocTemplates extends Command
         if (is_dir($dir)) {
             $dir = new RecursiveDirectoryIterator($dir);
             $iterator = new RecursiveIteratorIterator($dir);
-            $regex = new RegexIterator($iterator, '/^.+\.(md|html)$/', \RecursiveRegexIterator::GET_MATCH);
+            $regex = new RegexIterator($iterator, '/^.+\.(md|html)$/', RecursiveRegexIterator::GET_MATCH);
 
             foreach ($regex as $file) {
                 $file = $file[0];

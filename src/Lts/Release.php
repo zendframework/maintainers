@@ -82,6 +82,14 @@ class Release extends Command
         if (! preg_match('/^(0|[1-9]\d*)\.\d+$/', $version)) {
             throw new InvalidArgumentException('Invalid version provided');
         }
+
+        $path = $input->getOption('basePath');
+        if (! is_dir($path)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid base path provided; directory "%s" does not exist',
+                $path
+            ));
+        }
     }
 
     /**

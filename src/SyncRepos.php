@@ -18,7 +18,6 @@ class SyncRepos extends Command
     protected function configure()
     {
         $this
-            ->setName('sync-repos')
             ->setDescription('Synchronize zendframework packages descriptions')
             ->setHelp(
                 'Synchronize descriptions of zendframework organization packages with list'

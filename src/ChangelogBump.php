@@ -23,7 +23,6 @@ class ChangelogBump extends Command
     protected function configure()
     {
         $this
-            ->setName('changelog-bump')
             ->setDescription('Bumps the CHANGELOG version for the current component')
             ->setHelp(
                 'Checkout a temporary version/bump branch based on --base|-b'

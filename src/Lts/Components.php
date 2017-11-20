@@ -31,7 +31,6 @@ class Components extends Command
     protected function configure()
     {
         $this
-            ->setName('lts:components')
             ->setDescription('List LTS components, one per line')
             ->setHelp(
                 'List LTS components, one per line. This can be useful when looping in console scripts:'

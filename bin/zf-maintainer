@@ -6,22 +6,25 @@
  * @license   https://github.com/zendframework/maintainers/blob/master/LICENSE.md New BSD License
  */
 
-require __DIR__ . '/../vendor/autoload.php';
+namespace ZF\Maintainer;
 
 use Symfony\Component\Console\Application;
 
+require __DIR__ . '/../vendor/autoload.php';
+
 $components = include __DIR__ . '/../config/components.php';
 
-$application = new Application();
+$application = new Application('zf-maintainer');
+$application->addCommands([
+    new ChangelogBump('changelog-bump'),
+    new CreatePackage('create-package'),
+    new RebaseDocTemplates('rebase-doc-templates'),
+    new SyncRepos('sync-repos'),
 
-$application->add(new \ZF\Maintainer\ChangelogBump());
-$application->add(new \ZF\Maintainer\CreatePackage());
-$application->add(new \ZF\Maintainer\RebaseDocTemplates());
-$application->add(new \ZF\Maintainer\SyncRepos());
-
-$application->add((new \ZF\Maintainer\Lts\Components())->setComponents($components));
-$application->add(new \ZF\Maintainer\Lts\Patch());
-$application->add((new \ZF\Maintainer\Lts\Release())->setComponents($components));
-$application->add(new \ZF\Maintainer\Lts\Stage());
-
+    // lts tools
+    (new Lts\Components('lts:components'))->setComponents($components),
+    new Lts\Patch('lts:patch'),
+    (new Lts\Release('lts:release'))->setComponents($components),
+    new Lts\Stage('lts:stage'),
+]);
 $application->run();

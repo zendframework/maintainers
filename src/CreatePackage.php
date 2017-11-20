@@ -25,7 +25,6 @@ class CreatePackage extends Command
     protected function configure()
     {
         $this
-            ->setName('create-package')
             ->setDescription('Creates a new package')
             ->setHelp(
                 'The new package will be created in the directory of provided package name.'

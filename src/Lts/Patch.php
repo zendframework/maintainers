@@ -31,7 +31,6 @@ class Patch extends Command
     protected function configure()
     {
         $this
-            ->setName('lts:patch')
             ->setDescription('Rewrite a component patch so it may be applied against the ZF2 repo')
             ->setHelp(
                 'Rewrite a patch made against a component so that it may be applied'

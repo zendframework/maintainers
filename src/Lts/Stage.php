@@ -22,7 +22,6 @@ class Stage extends Command
     protected function configure()
     {
         $this
-            ->setName('lts:stage')
             ->setDescription('Stage a new LTS release by applying the given patchfile(s)')
             ->setHelp(
                 'Checkout a temporary branch based on the last release of the given minor version,'

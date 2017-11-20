@@ -24,7 +24,6 @@ class RebaseDocTemplates extends Command
     protected function configure()
     {
         $this
-            ->setName('rebase-doc-templates')
             ->setDescription('Rebase documentation templates for the package')
             ->setHelp(
                 'Rebase all documentation templates for the package specified.'

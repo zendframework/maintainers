@@ -44,7 +44,6 @@ class Release extends Command
     protected function configure()
     {
         $this
-            ->setName('lts:release')
             ->setDescription('Tag a new LTS maintenance release of all components')
             ->setHelp(
                 'Tag a new LTS maintenance release of all components.'

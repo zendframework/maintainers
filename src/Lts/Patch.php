@@ -92,11 +92,10 @@ class Patch extends Command
         $component = $input->getOption('component');
 
         if ($component === 'zend-i18n-resources') {
-            $this->rewriteResources($patchfile, $target);
-            return;
+            return $this->rewriteResources($patchfile, $target);
         }
 
-        $this->rewrite($component, $patchfile, $target);
+        return $this->rewrite($component, $patchfile, $target);
     }
 
     private function rewrite($component, $patchfile, $target)
@@ -130,6 +129,8 @@ class Patch extends Command
         );
 
         file_put_contents($target, $patch);
+
+        return 0;
     }
 
     private function rewriteResources($patchfile, $target)
@@ -149,6 +150,8 @@ class Patch extends Command
         );
 
         file_put_contents($target, $patch);
+
+        return 0;
     }
 
     private function resolveLibraryPath($component)

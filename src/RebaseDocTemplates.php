@@ -111,6 +111,8 @@ class RebaseDocTemplates extends Command
         }
         $this->updateReadme($replacement);
         $this->updateDocsFiles();
+
+        return 0;
     }
 
     private function updateDocs(array $replacement)

@@ -74,7 +74,7 @@ class CreatePackage extends Command
                 $repo
             ));
 
-            return;
+            return 1;
         }
 
         if (! mkdir($repo, 0775) && ! is_dir($repo)) {
@@ -83,7 +83,7 @@ class CreatePackage extends Command
                 $repo
             ));
 
-            return;
+            return 1;
         }
 
         $namespace = $this->determineNamespace($input, $output, $repo);
@@ -110,6 +110,8 @@ class CreatePackage extends Command
                 $repo
             ));
         }
+
+        return 0;
     }
 
     private function getTestNamespace($namespace)

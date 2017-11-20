@@ -148,6 +148,8 @@ class Release extends Command
         $output->writeln('');
         $output->writeln('<info>[DONE] Please verify tags and push the following tag:</info>');
         $output->writeln('       release-' . $version);
+
+        return 0;
     }
 
     /**

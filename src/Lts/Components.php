@@ -43,5 +43,7 @@ class Components extends Command
         array_walk($this->components, function ($component) use ($output) {
             $output->writeln($component);
         });
+
+        return 0;
     }
 }

@@ -89,7 +89,7 @@ class Stage extends Command
                 $currentVersion
             ));
 
-            return;
+            return 1;
         }
 
         // apply patchfile
@@ -100,7 +100,7 @@ class Stage extends Command
                     $patchfile
                 ));
 
-                return;
+                return 1;
             }
         }
 
@@ -109,7 +109,7 @@ class Stage extends Command
         if (false === $message) {
             $output->writeln('<error>[ERROR] Could not retrieve patch messages!</error>');
 
-            return;
+            return 1;
         }
 
         $nextVersion = $this->incrementVersion($currentVersion);
@@ -138,6 +138,8 @@ class Stage extends Command
             $message,
             $nextVersion
         ));
+
+        return 0;
     }
 
     /**

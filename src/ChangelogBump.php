@@ -78,7 +78,7 @@ class ChangelogBump extends Command
                 $base
             ));
 
-            return;
+            return 1;
         }
 
         // Update CHANGELOG.md file
@@ -96,6 +96,8 @@ class ChangelogBump extends Command
         $output->writeln($message);
         $output->writeln('Once done merging, remove this branch using:');
         $output->writeln('    <comment>git branch -d version/bump</comment>');
+
+        return 0;
     }
 
     /**

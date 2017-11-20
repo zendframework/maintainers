@@ -60,5 +60,7 @@ class SyncRepos extends Command
                 $output->writeln(sprintf('<error>FAILED</error>%s    %s', PHP_EOL, $e->getMessage()));
             }
         }
+
+        return 0;
     }
 }

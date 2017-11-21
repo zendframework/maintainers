@@ -393,10 +393,10 @@ $ git merge --no-ff release/2.5.3
 ```
 
 Next, you need to create a CHANGELOG stub for the next maintenance version. Use the
-`bin/maintainers.php changelog-bump` command:
+`zf-maintainer changelog-bump` command:
 
 ```console
-$ path/to/maintainers/bin/maintainers.php changelog-bump 2.5.4
+$ path/to/maintainers/bin/zf-maintainer changelog-bump 2.5.4
 ```
 
 Spot-check the `CHANGELOG.md` file, and then merge to each of the `master` and `develop` branches:
@@ -462,7 +462,7 @@ before pushing the branches and tags, do the following:
   `changelog-bump` command to specify the `develop` branch:
 
   ```console
-  $ path/to/maintainers/bin/maintainers.php changelog-bump 2.6.0 --base=develop
+  $ path/to/maintainers/bin/zf-maintainer changelog-bump 2.6.0 --base=develop
   ```
 
 - Merge the `version/bump` branch to `develop`.

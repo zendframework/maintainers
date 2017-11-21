@@ -6,13 +6,25 @@
  * @license   https://github.com/zendframework/maintainers/blob/master/LICENSE.md New BSD License
  */
 
-require __DIR__ . '/../vendor/autoload.php';
+namespace ZF\Maintainer;
 
 use Symfony\Component\Console\Application;
 
-$application = new Application();
+require __DIR__ . '/../vendor/autoload.php';
 
-$application->add(new \ZF\Maintainer\CreatePackage());
-$application->add(new \ZF\Maintainer\RebaseDocTemplates());
+$components = include __DIR__ . '/../config/components.php';
 
+$application = new Application('zf-maintainer');
+$application->addCommands([
+    new ChangelogBump('changelog-bump'),
+    new CreatePackage('create-package'),
+    new RebaseDocTemplates('rebase-doc-templates'),
+    new SyncRepos('sync-repos'),
+
+    // lts tools
+    (new Lts\Components('lts:components'))->setComponents($components),
+    new Lts\Patch('lts:patch'),
+    (new Lts\Release('lts:release'))->setComponents($components),
+    new Lts\Stage('lts:stage'),
+]);
 $application->run();

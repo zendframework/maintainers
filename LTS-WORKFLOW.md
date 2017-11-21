@@ -65,12 +65,12 @@ When you tag, make sure the tag message includes the CHANGELOG for the release.
 ## 3. Increment the LTS version of all other components
 
 Because the LTS version is for the framework as a whole, *all* components must be released
-simultaneously with the same new LTS version. The script `bin/maintainer.php` will help you in
+simultaneously with the same new LTS version. The script `bin/zf-maintainer` will help you in
 tagging those:
 
 ```console
-$ bin/maintainer.php lts-release 2.4 \
-> --exclude=zend-http,zend-mvc \
+$ path/to/maintainers/bin/zf-maintainer lts:release 2.4 \
+> --exclude=zend-http --exclude=zend-mvc \
 > --basePath=path/above/component/checkouts
 ```
 
@@ -80,11 +80,11 @@ already be tagged.
 Verify that the process finished successfully; if it did not, find out what went wrong. When it
 completes successfully, it will print out the new release version tagged.
 
-To push all LTS repos, use the `lts-components` target of the `bin/maintainers.php` command:
+To push all LTS repos, use the `lts:components` target of the `bin/zf-maintainer` command:
 
 ```console
 $ cd path/above/component/checkouts
-$ for COMPONENT in $(path/to/maintainers/bin/maintainer.php lts-components | grep '^zend-');do
+$ for COMPONENT in $(path/to/maintainers/bin/zf-maintainer lts:components | grep '^zend-');do
 > (cd ${COMPONENT} ; git push origin release-2.4.3:release-2.4.3)
 > done
 ```
@@ -93,11 +93,11 @@ Obviously, substitute the correct release tag!
 
 ## 4. Backport the patch to the ZF2 repository
 
-To backport a patch, use the `lts-patch` target of the `maintainer.php` command:
+To backport a patch, use the `lts:patch` target of the `bin/zf-maintainer` command:
 
 ```console
 $ cd path/to/zf2/checkout
-$ path/to/maintainers/bin/maintainer.php lts-patch \
+$ path/to/maintainers/bin/zf-maintainer lts:patch \
 > --component=zend-view \
 > --patchfile=path/to/zend-view/checkout/name-of-patchfile.patch \
 > --target=./name-of-patchfile.patch
@@ -110,7 +110,7 @@ Repeat the above for each component that has patches you need to release.
 Next, you need to create a temporary release branch and apply the patch.
 
 ```console
-$ path/to/maintainers/bin/mainter.php lts-stage 2.4 \
+$ path/to/maintainers/bin/zf-maintainer lts:stage 2.4 \
 > --patchfile=./name-of-patchfile.patch
 ```
 
@@ -122,12 +122,12 @@ This script will apply the patchfile, and then create a commit that:
 
 > ### Specifying multiple patchfiles
 >
-> If you created multiple patch files and want to apply them all, you can specify a comma-delimited
-> list of filenames to the `--patchfile` argument:
+> If you created multiple patch files and want to apply them all, you can use
+> `--patchfile` argument multiple times:
 >
 > ```console
-> $ path/to/maintainers/bin/mainter.php lts-stage 2.4 \
-> > --patchfile=./name-of-patchfile.patch,./another-patchfile.patch,./etc.patch
+> $ path/to/maintainers/bin/zf-maintainer lts:stage 2.4 \
+> > --patchfile=./name-of-patchfile.patch --patchfile=./another-patchfile.patch --patchfile=./etc.patch
 > ```
 
 Check for errors applying the patch(es) (there should not be any), and run the tests specific to the
@@ -147,8 +147,8 @@ $ ../vendor/bin/phpunit ZendTest/View/Helper/ServerUrl.php
 > If you observe failing tests when there shouldn't be, run `composer update` and then re-run the
 > tests.
 
-At this point, you can now tag; the `lts-stage` will provide you with the `git tag` command to
-use. You can then push the tag and delete the branch:
+At this point, you can now tag; the `lts:stage` target will provide you with the
+`git tag` command to use. You can then push the tag and delete the branch:
 
 ```console
 $ git push origin <tagname>:<tagname>
@@ -162,5 +162,5 @@ Now that the tag is made, the Zend team will need to build and release distribut
 such, please coordinate with them whenever you tag, so that they can do so as soon as possible after
 a tag is created.
 
-If you cannot find one of them in the usual IRC channels, please send an email to
-zf-deveam@zend.com.
+If you cannot find one of them in the [Slack](https://zendframework-slack.herokuapp.com),
+please send an email to zf-devteam@zend.com.

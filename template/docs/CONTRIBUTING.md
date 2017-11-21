@@ -156,7 +156,7 @@ To send a pull request, you have two options.
 If using GitHub, you can do the pull request from there. Navigate to
 your repository, select the branch you just created, and then select the
 "Pull Request" button in the upper right. Select the user/organization
-"zendframework" (or whatever the upstream organization is) as the recipient.
+"{org}" (or whatever the upstream organization is) as the recipient.
 
 #### What branch to issue the pull request against?
 

@@ -147,8 +147,8 @@ $ ../vendor/bin/phpunit ZendTest/View/Helper/ServerUrl.php
 > If you observe failing tests when there shouldn't be, run `composer update` and then re-run the
 > tests.
 
-At this point, you can now tag; the `lts:stage` will provide you with the `git tag` command to
-use. You can then push the tag and delete the branch:
+At this point, you can now tag; the `lts:stage` target will provide you with the
+`git tag` command to use. You can then push the tag and delete the branch:
 
 ```console
 $ git push origin <tagname>:<tagname>
@@ -163,4 +163,4 @@ such, please coordinate with them whenever you tag, so that they can do so as so
 a tag is created.
 
 If you cannot find one of them in the [Slack](https://zendframework-slack.herokuapp.com),
-please send an email to zf-deveam@zend.com.
+please send an email to zf-devteam@zend.com.

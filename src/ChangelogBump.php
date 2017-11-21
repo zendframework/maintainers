@@ -1,83 +1,83 @@
 <?php
+/**
+ * @see       https://github.com/zendframework/maintainers for the canonical source repository
+ * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/maintainers/blob/master/LICENSE.md New BSD License
+ */
+
 namespace ZF\Maintainer;
 
-use RuntimeException;
-use Zend\Console\Adapter\AdapterInterface as Console;
-use Zend\Console\ColorInterface as Color;
-use ZF\Console\Route;
+use InvalidArgumentException;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Create a new branch and create a new changelog version entry.
  */
-class ChangelogBump
+class ChangelogBump extends Command
 {
-    /**
-     * Git executable.
-     *
-     * @var string
-     */
-    private $git;
-
-    /**
-     * Whether or not verbosity is currently enabled.
-     *
-     * @var bool
-     */
-    private $verbose = false;
-
-    /**
-     * Constructor.
-     *
-     * Determines the git executable to use if none is provided, raising an
-     * exception if none can be found.
-     *
-     * @param null|string $git
-     * @throws RuntimeException when unable to discover git executable.
-     */
-    public function __construct($git = null)
+    protected function configure()
     {
-        if (null === $git) {
-            $git = shell_exec('which git');
-            $git = trim($git);
+        $this
+            ->setDescription('Bumps the CHANGELOG version for the current component')
+            ->setHelp(
+                'Checkout a temporary version/bump branch based on --base|-b'
+                . ' (defaults to master), and create a new CHANGELOG entry for the provided version.'
+            )
+            ->addArgument(
+                'version',
+                InputArgument::REQUIRED,
+                'New CHANGELOG version to add'
+            )
+            ->addOption(
+                'base',
+                'b',
+                InputOption::VALUE_REQUIRED,
+                'Branch against which to change the CHANGELOG version; can be one of "master" or "develop".',
+                'master'
+            );
+    }
+
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        parent::initialize($input, $output);
+
+        $base = $input->getOption('base');
+        if (! in_array($base, ['master', 'develop'], true)) {
+            throw new InvalidArgumentException(
+                'Invalid base branch provided; "master" and "develop" are only allowed'
+            );
         }
 
-        if (empty($git)) {
-            throw new RuntimeException('Unable to discover git executable');
+        $version = $input->getArgument('version');
+        if (! preg_match('/^(0|[1-9]\d*)\.\d+\.\d+$/', $version)) {
+            throw new InvalidArgumentException(
+                'Invalid version provided'
+            );
         }
-
-        // If you use 'hub', git is a function
-        if (preg_match('/[ )(\}\{]/', $git)) {
-            $git = 'git';
-        }
-
-        $this->git = $git;
     }
 
     /**
      * Create a new local branch and bump the changelog version entry.
-     *
-     * @param Route $route
-     * @param Console $console
-     * @return int
      */
-    public function __invoke(Route $route, Console $console)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $opts       = $route->getMatches();
-        $version    = $opts['version'];
-        $base       = $opts['base'];
+        $version = $input->getArgument('version');
+        $base = $input->getOption('base');
 
-        $this->verbose = $opts['verbose'] || $opts['v'];
+        $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
 
         // checkout version/bump branch based on $base
-        if (0 !== $this->exec(sprintf(
-            '%s checkout -b version/bump %s',
-            $this->git,
-            $base
-        ), $console)) {
-            $console->writeLine(sprintf(
-                '[ERROR] Could not create new version/bump branch based on branch %s!',
+        if (0 !== $this->exec(sprintf('git checkout -b version/bump %s', $base), $output)) {
+            $errOutput->writeln(sprintf(
+                '<error>Could not create new version/bump branch based on branch %s!</error>',
                 $base
-            ), Color::WHITE, Color::RED);
+            ));
+
             return 1;
         }
 
@@ -85,17 +85,18 @@ class ChangelogBump
         $this->updateChangelog($version);
 
         // Commit version bump
-        $this->commitVersionBump($version, $console);
+        $this->commitVersionBump($version, $output, $errOutput);
 
-        $message = sprintf('[DONE] Please verify and merge the branch back to %s', $base);
+        $message = sprintf('<info>Please verify and merge the branch back to %s', $base);
         if ($base === 'master') {
             $message .= ' as well as develop';
         }
+        $message .= '</info>';
 
-        $console->writeLine($message, Color::GREEN);
+        $output->writeln($message);
+        $output->writeln('Once done merging, remove this branch using:');
+        $output->writeln('    <comment>git branch -d version/bump</comment>');
 
-        $console->writeLine('Once done merging, remove this branch using:');
-        $console->writeLine('    git branch -d version/bump');
         return 0;
     }
 
@@ -128,16 +129,13 @@ class ChangelogBump
      * Commit the changes made to the CHANGELOG.
      *
      * @param string $version
-     * @param Console $console
+     * @param OutputInterface $output
+     * @param OutputInterface $errOutput
      */
-    private function commitVersionBump($version, Console $console)
+    private function commitVersionBump($version, OutputInterface $output, OutputInterface $errOutput)
     {
-        if (0 !== $this->exec(sprintf(
-            '%s commit -a -m "Bumped to next dev version (%s)"',
-            $this->git,
-            $version
-        ), $console)) {
-            $console->writeLine('[ERROR] Could not commit version bump changes!', Color::WHITE, Color::RED);
+        if (0 !== $this->exec(sprintf('git commit -a -m "Bumped to next dev version (%s)"', $version), $output)) {
+            $errOutput->writeln('<error>Could not commit version bump changes!</error>');
         }
     }
 
@@ -148,33 +146,20 @@ class ChangelogBump
      * executing it.
      *
      * @param string $command
-     * @param Console $console
+     * @param OutputInterface $output
      * @return int The return value from executing the command.
      */
-    private function exec($command, Console $console)
+    private function exec($command, OutputInterface $output)
     {
-        $this->emit(sprintf("Executing command: %s\n", $command), $console, Color::BLUE);
-        $this->emit(exec($command, $output, $return), $console);
-        return $return;
-    }
+        $output->writeln(
+            sprintf('Executing command: <comment>%s</comment>', $command),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
+        $output->writeln(
+            exec($command, $out, $return),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
 
-    /**
-     * Emit a message.
-     *
-     * If verbosity is disabled, does nothing.
-     *
-     * If verbosity is enabled, writes the line using the provided $console,
-     * and in the provided $color.
-     *
-     * @param string $message
-     * @param Console $console
-     * @param int $color
-     */
-    private function emit($message, Console $console, $color = Color::WHITE)
-    {
-        if (! $this->verbose) {
-            return;
-        }
-        $console->writeLine($message, $color);
+        return $return;
     }
 }

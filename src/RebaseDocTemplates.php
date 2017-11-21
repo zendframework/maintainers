@@ -7,10 +7,12 @@
 
 namespace ZF\Maintainer;
 
-use Github\Exception\RuntimeException;
+use InvalidArgumentException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use RecursiveRegexIterator;
 use RegexIterator;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,13 +21,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RebaseDocTemplates extends Command
 {
-    /** @var string Path to the package */
-    private $path;
-
     protected function configure()
     {
         $this
-            ->setName('rebase-doc-templates')
             ->setDescription('Rebase documentation templates for the package')
             ->setHelp(
                 'Rebase all documentation templates for the package specified.'
@@ -53,25 +51,38 @@ class RebaseDocTemplates extends Command
             )
             ->addArgument(
                 'path',
-                InputArgument::REQUIRED,
-                'Path to the package (often ".").'
+                InputArgument::OPTIONAL,
+                'Path to the package; if not specified, assumed to be the current working directory',
+                realpath(getcwd())
             );
+    }
+
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        parent::initialize($input, $output);
+
+        $path = $input->getArgument('path');
+        if (! is_dir($path)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid package path provided; directory "%s" does not exist',
+                $path
+            ));
+        }
+
+        if (! file_exists(sprintf('%s/composer.json', $path))) {
+            throw new InvalidArgumentException(sprintf(
+                'Cannot locate composer.json file in directory "%s"',
+                $path
+            ));
+        }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->path = $input->getArgument('path');
+        $path = $input->getArgument('path');
+        chdir($path);
 
         $errOutput = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
-
-        if (! is_dir($this->path)) {
-            $errOutput->writeln(sprintf(
-                '<error>Invalid path to the package: "%s"</error>',
-                $this->path
-            ));
-
-            return;
-        }
 
         list($org, $repo) = $this->getOrg();
 
@@ -86,7 +97,7 @@ class RebaseDocTemplates extends Command
         ];
 
         // check if the repository has the documentation
-        $hasDocs = file_exists(sprintf('%s/mkdocs.yml', $this->path));
+        $hasDocs = file_exists('mkdocs.yml');
 
         $this->updateDocs($replacement);
         $this->updateCoveralls();
@@ -99,18 +110,20 @@ class RebaseDocTemplates extends Command
             $this->updateMkDocs($yearReplacement);
         }
         $this->updateReadme($replacement);
-        $this->updateDocsLinks();
+        $this->updateDocsFiles();
+
+        return 0;
     }
 
     private function updateDocs(array $replacement)
     {
         // if there is no docs directory create one
-        if (! is_dir(sprintf('%s/docs', $this->path))) {
+        if (! is_dir('docs')) {
             // if there is doc directory rename it to docs
-            if (is_dir(sprintf('%s/doc', $this->path))) {
-                exec(sprintf('cd %s && git mv doc docs', $this->path));
+            if (is_dir('doc')) {
+                exec('git mv doc docs');
             } else {
-                mkdir(sprintf('%s/docs', $this->path), 0775);
+                mkdir('docs', 0775);
             }
         }
 
@@ -122,40 +135,35 @@ class RebaseDocTemplates extends Command
             'SUPPORT.md',
         ];
 
-        if (file_exists(sprintf('%s/CONTRIBUTING.md', $this->path))) {
-            exec(sprintf('cd %s && git mv CONTRIBUTING.md docs/CONTRIBUTING.md', $this->path));
+        if (file_exists('CONTRIBUTING.md')) {
+            exec('git mv CONTRIBUTING.md docs/CONTRIBUTING.md');
         }
 
         if (file_exists('CONDUCT.md')) {
-            exec(sprintf('cd %s && git mv CONDUCT.md docs/CODE_OF_CONDUCT.md', $this->path));
+            exec('git mv CONDUCT.md docs/CODE_OF_CONDUCT.md');
         }
 
         foreach ($docs as $file) {
-            if (file_exists(sprintf('%s/docs/%s', $this->path, $file))) {
-                unlink(sprintf('%s/docs/%s', $this->path, $file));
+            if (file_exists(sprintf('docs/%s', $file))) {
+                unlink(sprintf('docs/%s', $file));
             }
 
             $content = file_get_contents(__DIR__ . '/../template/docs/' . $file);
             $content = strtr($content, $replacement);
 
-            file_put_contents(sprintf('%s/docs/%s', $this->path, $file), $content);
+            file_put_contents(sprintf('docs/%s', $file), $content);
         }
     }
 
     private function updateCoveralls()
     {
-        copy(
-            __DIR__ . '/../template/.coveralls.yml',
-            sprintf('%s/.coveralls.yml', $this->path)
-        );
+        copy(__DIR__ . '/../template/.coveralls.yml', '.coveralls.yml');
     }
 
     private function updateTravisCI()
     {
-        $dest = sprintf('%s/.travis.yml', $this->path);
-
-        if (! file_exists($dest)) {
-            copy(__DIR__ . '/../template/.travis.yml', $dest);
+        if (! file_exists('.travis.yml')) {
+            copy(__DIR__ . '/../template/.travis.yml', '.travis.yml');
         }
     }
 
@@ -171,32 +179,29 @@ class RebaseDocTemplates extends Command
         }
 
         // Benchmarks
-        if (file_exists(sprintf('%s/phpbench.json', $this->path))) {
+        if (file_exists('phpbench.json')) {
             // the directory name with benchmarks is not consistent across repositories, we check then both
-            if (is_dir(sprintf('%s/benchmark', $this->path))) {
+            if (is_dir('benchmark')) {
                 $content[] = '/benchmark export-ignore';
             }
-            if (is_dir(sprintf('%s/benchmarks', $this->path))) {
+            if (is_dir('benchmarks')) {
                 $content[] = '/benchmarks export-ignore';
             }
             $content[] = '/phpbench.json export-ignore';
         }
 
         // License docheader
-        if (file_exists(sprintf('%s/.docheader', $this->path))) {
+        if (file_exists('.docheader')) {
             $composer = $this->getComposerContent();
             if (isset($composer['require-dev']['malukenho/docheader'])) {
                 $content[] = '/.docheader export-ignore';
             } else {
-                unlink(sprintf('%s/.docheader', $this->path));
+                unlink('.docheader');
             }
         }
 
         natsort($content);
-        file_put_contents(
-            sprintf('%s/.gitattributes', $this->path),
-            implode("\n", $content) . "\n"
-        );
+        file_put_contents('.gitattributes', implode("\n", $content) . "\n");
     }
 
     private function updateGitIgnore($hasDocs)
@@ -214,10 +219,7 @@ class RebaseDocTemplates extends Command
             ]);
         }
 
-        file_put_contents(
-            sprintf('%s/.gitignore', $this->path),
-            implode("\n", $content) . "\n"
-        );
+        file_put_contents('.gitignore', implode("\n", $content) . "\n");
     }
 
     private function updateComposerJson(OutputInterface $errOutput, $hasDocs, array $replacement, $org, $repo)
@@ -261,7 +263,7 @@ class RebaseDocTemplates extends Command
         $content['scripts'] = $templateContent['scripts'];
 
         // add license-check script only when we use .docheader library
-        if (file_exists(sprintf('%s/.docheader', $this->path))) {
+        if (file_exists('.docheader')) {
             array_unshift($content['scripts']['check'], '@license-check');
             $content['scripts']['license-check'] = 'docheader check src/ test/';
         }
@@ -314,7 +316,7 @@ class RebaseDocTemplates extends Command
 
         // check branch-alias in composer
         // get last released version:
-        if ($tag = exec(sprintf('cd %s && git ls-remote --tags origin', $this->path))) {
+        if ($tag = exec('git ls-remote --tags origin')) {
             if (preg_match('#[/-](\d+\.\d+)\.\d+#', $tag, $m)) {
                 $ver = explode('.', $m[1]);
                 if ($ver[0] === '0') {
@@ -325,7 +327,7 @@ class RebaseDocTemplates extends Command
                 $content['extra']['branch-alias']['dev-master'] = $m[1] . '-dev';
 
                 // check if there is develop branch
-                if ($output = exec(sprintf('cd %s && git ls-remote --heads origin refs/heads/develop', $this->path))) {
+                if ($output = exec('git ls-remote --heads origin refs/heads/develop')) {
                     $ver[1]++;
 
                     $content['extra']['branch-alias']['dev-develop'] = implode('.', $ver) . '-dev';
@@ -358,7 +360,7 @@ class RebaseDocTemplates extends Command
         });
 
         file_put_contents(
-            sprintf('%s/composer.json', $this->path),
+            'composer.json',
             json_encode(
                 $content,
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
@@ -369,8 +371,8 @@ class RebaseDocTemplates extends Command
     private function updateLicense(OutputInterface $errOutput)
     {
         $year = $startYear = date('Y');
-        if (file_exists(sprintf('%s/LICENSE.md', $this->path))) {
-            $content = file_get_contents(sprintf('%s/LICENSE.md', $this->path));
+        if (file_exists('LICENSE.md')) {
+            $content = file_get_contents('LICENSE.md');
             if (preg_match('/Copyright \(c\) (\d{4})/', $content, $m)) {
                 $startYear = $m[1];
             } else {
@@ -384,14 +386,14 @@ class RebaseDocTemplates extends Command
         $yearReplacement = $startYear < $year ? sprintf('%s-%s', $startYear, $year) : $year;
         $content = file_get_contents(__DIR__ . '/../template/LICENSE.md');
         $content = str_replace('{year}', $yearReplacement, $content);
-        file_put_contents(sprintf('%s/LICENSE.md', $this->path), $content);
+        file_put_contents('LICENSE.md', $content);
 
         return $yearReplacement;
     }
 
     private function updateMkDocs($yearReplacement)
     {
-        $file = sprintf('%s/mkdocs.yml', $this->path);
+        $file = 'mkdocs.yml';
 
         $content = file_get_contents($file);
         $content = preg_replace('/docs_dir:.*/', 'docs_dir: docs/book', $content);
@@ -417,7 +419,7 @@ class RebaseDocTemplates extends Command
             $coverageBadge = strtr($m[0], $replacement);
         }
 
-        $file = sprintf('%s/README.md', $this->path);
+        $file = 'README.md';
         $content = file_get_contents($file);
 
         if ($buildBadge) {
@@ -457,19 +459,18 @@ class RebaseDocTemplates extends Command
         file_put_contents($file, $content);
     }
 
-    private function updateDocsLinks()
+    private function updateDocsFiles()
     {
-        $dir = sprintf('%s/docs/book/', $this->path);
-
-        if (is_dir($dir)) {
-            $dir = new RecursiveDirectoryIterator($dir);
+        if (is_dir('docs/book/')) {
+            $dir = new RecursiveDirectoryIterator('docs/book/');
             $iterator = new RecursiveIteratorIterator($dir);
-            $regex = new RegexIterator($iterator, '/^.+\.md$/', \RecursiveRegexIterator::GET_MATCH);
+            $regex = new RegexIterator($iterator, '/^.+\.(md|html)$/', RecursiveRegexIterator::GET_MATCH);
 
             foreach ($regex as $file) {
                 $file = $file[0];
                 $content = file_get_contents($file);
                 $content = str_replace('zendframework.github.io', 'docs.zendframework.com', $content);
+                $content = preg_replace('/[ \t\r]+$/m', '', $content);
                 file_put_contents($file, $content);
             }
         }
@@ -477,10 +478,6 @@ class RebaseDocTemplates extends Command
 
     private function getOrg()
     {
-        if (! file_exists($this->path . '/composer.json')) {
-            throw new RuntimeException('Cannot locate composer.json in provided package directory');
-        }
-
         $composer = $this->getComposerContent();
         if (! isset($composer['name']) || ! preg_match('/^([a-z0-9-]+)\/([a-z0-9-]+)$/', $composer['name'], $m)) {
             throw new RuntimeException(
@@ -493,9 +490,6 @@ class RebaseDocTemplates extends Command
 
     private function getComposerContent()
     {
-        return json_decode(
-            file_get_contents(sprintf('%s/composer.json', $this->path)),
-            true
-        );
+        return json_decode(file_get_contents('composer.json'), true);
     }
 }

@@ -54,12 +54,23 @@ repository. Run the following:
 $ composer install
 ```
 
-to ensure dependencies are present. The tools are in the `bin/maintainers.php` script.
+to ensure dependencies are present. The tools are in the `bin/zf-maintainer` script.
 
-### `bin/zf-maintainer`
-
-This script currently has the following actions:
+This script currently has the following general use command:
+- `changelog-bump <version> [-b|--base <master|develop>]` - bumps the
+  CHANGELOG version for the current component;
 - `create-package <name>` - creates a new package from templates;
-- `rebase-doc-template <path>` - rebases all templates for specified package.
+- `rebase-doc-template [<path>]` - rebases all templates in package,
+  by default current directory is used;
+- `sync-repos <github-token>` - synchronizes zendframework packages descriptions;
+
+and command to help maintain LTS release:
+- `lts:components` - lists LTS components, one per line;
+- `lts:patch -p|--patchfile=<patchfile> -t|--target=<target> -c|--component=<component>` -
+  rewrites a component patch so it may be applied against the ZF2 repo;
+- `lts:release <version> -e|--exclude=<exclude> [-b|--basePath <base-path>]` -
+  tags a new LTS maintenance release of all components;
+- `lts:stage <version> -p|--patchfile=<patchfile>` - stages a new LTS release
+  by applying the given patchfile(s).
 
 To get more information about each command you can call them with `--help` flag.

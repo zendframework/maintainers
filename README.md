@@ -61,7 +61,7 @@ This script currently has the following general use commands:
 - `changelog-bump <version> [-b|--base <master|develop>]`: bumps the
   CHANGELOG version for the current component.
 - `create-package <name>`: creates a new package from templates.
-- `rebase-doc-template [<path>]`: rebases all templates in package;
+- `rebase-doc-templates [<path>]`: rebases all templates in package;
   by default, the current directory is used.
 - `sync-repos <github-token>`: synchronizes zendframework package descriptions.
 

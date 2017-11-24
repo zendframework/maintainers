@@ -19,6 +19,7 @@ $application->addCommands([
     new ChangelogBump('changelog-bump'),
     new CreatePackage('create-package'),
     new RebaseDocTemplates('rebase-doc-templates'),
+    new Sync\Keywords('sync:keywords'),
     new SyncRepos('sync-repos'),
 
     // lts tools

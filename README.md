@@ -63,6 +63,8 @@ This script currently has the following general use commands:
 - `create-package <name>`: creates a new package from templates.
 - `rebase-doc-template [<path>]`: rebases all templates in package;
   by default, the current directory is used.
+- `sync:keywords <github-token> -o|--org=<org> -r|--repo=<repo> [--dry-run]`:
+  synchronizes composer.json keywords with github topics.
 - `sync-repos <github-token>`: synchronizes zendframework package descriptions.
 
 and the following commands to help maintain LTS releases:

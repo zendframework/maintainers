@@ -24,6 +24,11 @@ class Keywords extends Command
             ->setDescription('Synchronize composer.json keywords with GitHub topics')
             ->setHelp(
                 'Update all GitHub topics to match keywords provided in composer.json file of the repository.'
+                . PHP_EOL . PHP_EOL
+                . 'Please run script with --dry-run flag first to determine differences between GitHub topics'
+                . ' and repository composer.json keywords. For each repository output contains the color-coded'
+                . ' keyword list. Keywords marked on red are going to be removed from GitHub tokens; marked on'
+                . ' cyan - added (or updated).'
             )
             ->addArgument(
                 'token',
@@ -43,7 +48,13 @@ class Keywords extends Command
                 'Repository pattern to synchronize GitHub topics;'
                 . ' * can be used to match any repository name or part of the name'
             )
-            ->addOption('dry-run', null, null, 'Dry run to see what is going to be done.');
+            ->addOption(
+                'dry-run',
+                null,
+                null,
+                'Outputs the differences between GitHub topics and composer.json keywords.'
+                . ' It should be used to determine if the GitHub topics contain keywords not in the composer.json.'
+            );
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)

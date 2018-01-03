@@ -1,11 +1,11 @@
 <?php
 /**
  * @see       https://github.com/zendframework/maintainers for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2017-2018 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/maintainers/blob/master/LICENSE.md New BSD License
  */
 
-namespace ZF\Maintainer;
+namespace ZF\Maintainer\Sync;
 
 use Github\Client;
 use Symfony\Component\Console\Command\Command;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SyncRepos extends Command
+class Repos extends Command
 {
     protected function configure()
     {

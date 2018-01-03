@@ -2,7 +2,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/maintainers for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2017-2018 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/maintainers/blob/master/LICENSE.md New BSD License
  */
 
@@ -19,7 +19,8 @@ $application->addCommands([
     new ChangelogBump('changelog-bump'),
     new CreatePackage('create-package'),
     new RebaseDocTemplates('rebase-doc-templates'),
-    new SyncRepos('sync-repos'),
+    new Sync\Keywords('sync:keywords'),
+    new Sync\Repos('sync:repos'),
 
     // lts tools
     (new Lts\Components('lts:components'))->setComponents($components),

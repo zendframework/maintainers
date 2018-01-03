@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/maintainers for the canonical source repository
- * @copyright Copyright (c) 2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2017-2018 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   https://github.com/zendframework/maintainers/blob/master/LICENSE.md New BSD License
  */
 
@@ -23,12 +23,13 @@ class Keywords extends Command
         $this
             ->setDescription('Synchronize composer.json keywords with GitHub topics')
             ->setHelp(
-                'Update all GitHub topics to match keywords provided in composer.json file of the repository.'
+                'Update all GitHub topics to match keywords provided in the composer.json file of the repository.'
                 . PHP_EOL . PHP_EOL
-                . 'Please run script with --dry-run flag first to determine differences between GitHub topics'
-                . ' and repository composer.json keywords. For each repository output contains the color-coded'
-                . ' keyword list. Keywords marked on red are going to be removed from GitHub tokens; marked on'
-                . ' cyan - added (or updated).'
+                . 'Please run the script with --dry-run first to determine differences between GitHub topics'
+                . ' and composer.json keywords. The output will contain a color-coded keyword list for'
+                . ' each repository that will be updated.'
+                . ' Keywords marked in red are those that will be removed from GitHub topics;'
+                . ' those marked in cyan will be added (or updated).'
             )
             ->addArgument(
                 'token',
@@ -39,14 +40,14 @@ class Keywords extends Command
                 'org',
                 'o',
                 InputOption::VALUE_REQUIRED,
-                'Organization to update GitHub topics'
+                'Organization for which to update GitHub topics.'
             )
             ->addOption(
                 'repo',
                 'r',
                 InputOption::VALUE_REQUIRED,
-                'Repository pattern to synchronize GitHub topics;'
-                . ' * can be used to match any repository name or part of the name'
+                'Repositor(y|ies) with which to synchronize GitHub topics. The value may be a'
+                . 'single repo name, or * may be used to match any repository name or part of the name.'
             )
             ->addOption(
                 'dry-run',
@@ -62,16 +63,16 @@ class Keywords extends Command
         parent::initialize($input, $output);
 
         $org = $input->getOption('org');
-        if (! preg_match('/^[a-z0-9-]+$/i', $org)) {
+        if (! preg_match('/^[a-z0-9_-]+$/i', $org)) {
             throw new InvalidArgumentException(
-                'Invalid organization name, can contain only letter, numbers and dash'
+                'Invalid organization name; can contain only letters, numbers, dashes, and underscores'
             );
         }
 
         $repo = $input->getOption('repo');
-        if (! preg_match('/^[a-z0-9*-]+$/i', $repo)) {
+        if (! preg_match('/^[a-z0-9_*-]+$/i', $repo)) {
             throw new InvalidArgumentException(
-                'Invalid repository pattern, can contain only letters, numbers, dash and *'
+                'Invalid repository pattern, can contain only letters, numbers, dashes, underscores, and *'
             );
         }
     }

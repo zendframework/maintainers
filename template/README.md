@@ -15,10 +15,4 @@ $ composer require {org}/{repo}
 
 ## Documentation
 
-Documentation is [in the doc tree](docs/book/), and can be compiled using [mkdocs](http://www.mkdocs.org):
-
-```bash
-$ mkdocs build
-```
-
-You may also [browse the documentation online](https://docs.zendframework.com/{repo}/).
+Browse the documentation online at https://docs.zendframework.com/{repo}/

@@ -5,6 +5,8 @@
  * @license   https://github.com/{org}/{repo}/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace {namespace-test};
 
 use PHPUnit\Framework\TestCase;

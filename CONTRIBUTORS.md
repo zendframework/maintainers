@@ -25,8 +25,9 @@ doing a little due-diligence:
 - See if your use case is covered in the manual.
 - See if your use case is demonstrated by the API docs.
 - Ask the mailing list about your particular use case.
-- Discuss your issue with someone in one of the IRC channels: `#zftalk` (general help) or
-  `#zftalk.dev` (contributors) on [Freenode IRC](http://freenode.net).
+- Discuss your issue with someone in one of the public channels: 
+  [Slack](https://zendframework-slack.herokuapp.com/) or on the
+  [Forums](https://discourse.zendframework.com/).
 - Write a failing test case.
 
 None of these are required steps. However, failure to do any of them can and likely will result in

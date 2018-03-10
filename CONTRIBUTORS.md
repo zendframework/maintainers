@@ -16,7 +16,6 @@ read/subscribe to the following resources:
 If you are working on new features or refactoring
 [create a proposal](https://github.com/{org}/{repo}/issues/new).
 
-
 ## Filing Issue Reports
 
 Before you file an issue report, we ask that you ensure that what you have is indeed a bug, by
@@ -27,7 +26,7 @@ doing a little due-diligence:
 - Ask the mailing list about your particular use case.
 - Discuss your issue with someone in one of the public channels: 
   [Slack](https://zendframework-slack.herokuapp.com/) or on the
-  [Forums](https://discourse.zendframework.com/).
+  [Forums](https://discourse.zendframework.com/c/contributors).
 - Write a failing test case.
 
 None of these are required steps. However, failure to do any of them can and likely will result in

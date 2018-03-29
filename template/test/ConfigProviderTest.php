@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/{org}/{repo} for the canonical source repository
- * @copyright Copyright (c) {year} Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright https://github.com/{org}/{repo}/blob/master/COPYRIGHT.md Copyright
  * @license   https://github.com/{org}/{repo}/blob/master/LICENSE.md New BSD License
  */
 

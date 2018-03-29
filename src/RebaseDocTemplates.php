@@ -36,6 +36,7 @@ class RebaseDocTemplates extends Command
                 . '  - updates .gitattributes and .gitignore definitions' . PHP_EOL
                 . '  - creates Travis CI configuration if does not exist' . PHP_EOL
                 . '  - updates LICENSE.md year range; creates file if it does not exist' . PHP_EOL
+                . '  - updates COPYRIGHT.md year range; creates file if it does not exist' . PHP_EOL
                 . '  - updates documentation configuration (copyright year and docs/ dir)' . PHP_EOL
                 . '  - updates composer.json skeleton:' . PHP_EOL
                 . '    - checks and fixes repository description (only for zendframework org)' . PHP_EOL
@@ -109,6 +110,7 @@ class RebaseDocTemplates extends Command
         if ($hasDocs) {
             $this->updateMkDocs($yearReplacement);
         }
+        $this->updateCopyright($yearReplacement);
         $this->updateReadme($replacement);
         $this->updateDocsFiles();
 
@@ -389,6 +391,13 @@ class RebaseDocTemplates extends Command
         file_put_contents('LICENSE.md', $content);
 
         return $yearReplacement;
+    }
+
+    private function updateCopyright($yearReplacement)
+    {
+        $content = file_get_contents(__DIR__ . '/../template/COPYRIGHT.md');
+        $content = str_replace('{year}', $yearReplacement, $content);
+        file_put_contents('COPYRIGHT.md', $content);
     }
 
     private function updateMkDocs($yearReplacement)

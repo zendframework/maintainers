@@ -1,1 +1,1 @@
-Copyright (c) 2015-2018, Zend Technologies USA, Inc.
+Copyright (c) 2005-2018, Zend Technologies USA, Inc. All rights reserved.

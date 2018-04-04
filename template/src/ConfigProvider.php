@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/{org}/{repo} for the canonical source repository
- * @copyright https://github.com/{org}/{repo}/blob/master/COPYRIGHT.md Copyright
+ * @copyright https://github.com/{org}/{repo}/blob/master/COPYRIGHT.md
  * @license   https://github.com/{org}/{repo}/blob/master/LICENSE.md New BSD License
  */
 

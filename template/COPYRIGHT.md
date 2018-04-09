@@ -1,1 +1,1 @@
-Copyright (c) {year}, Zend Technologies USA, Inc. All rights reserved.
+Copyright (c) {year}, Zend Technologies USA, Inc. All rights reserved. (https://www.zend.com)

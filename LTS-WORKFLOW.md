@@ -162,5 +162,5 @@ Now that the tag is made, the Zend team will need to build and release distribut
 such, please coordinate with them whenever you tag, so that they can do so as soon as possible after
 a tag is created.
 
-If you cannot find one of them in the [Slack](https://zendframework-slack.herokuapp.com),
+If you cannot find one of them in the [Chat](https://zendframework-slack.herokuapp.com),
 please send an email to zf-devteam@zend.com.

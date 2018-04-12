@@ -13,7 +13,7 @@
         "issues": "https://github.com/{org}/{repo}/issues",
         "source": "https://github.com/{org}/{repo}",
         "rss": "https://github.com/{org}/{repo}/releases.atom",
-        "slack": "https://zendframework-slack.herokuapp.com",
+        "chat": "https://zendframework-slack.herokuapp.com",
         "forum": "https://discourse.zendframework.com/c/questions/{category}"
     },
     "require": {

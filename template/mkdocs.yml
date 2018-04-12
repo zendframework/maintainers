@@ -6,4 +6,4 @@ pages:
 site_name: Component Name Goes Here
 site_description: 'Component Description goes here'
 repo_url: 'https://github.com/{org}/{repo}'
-copyright: 'Copyright (c) {year} <a href="http://www.zend.com/">Zend Technologies USA Inc.</a>'
+copyright: 'Copyright (c) {year} <a href="https://www.zend.com/">Zend Technologies USA Inc.</a>'

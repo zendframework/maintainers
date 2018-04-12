@@ -15,10 +15,10 @@ $ composer require {org}/{repo}
 
 ## Documentation
 
-Documentation is [in the doc tree](docs/book/), and can be compiled using [mkdocs](http://www.mkdocs.org):
+Browse the documentation online at https://docs.zendframework.com/{repo}/
 
-```bash
-$ mkdocs build
-```
+## Support
 
-You may also [browse the documentation online](https://docs.zendframework.com/{repo}/).
+* [Issues](https://github.com/zendframework/{repo}/issues/)
+* [Chat](https://zendframework-slack.herokuapp.com/)
+* [Forum](https://discourse.zendframework.com/)

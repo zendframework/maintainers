@@ -182,10 +182,10 @@ class RebaseDocTemplates extends Command
         if (file_exists('phpbench.json')) {
             // the directory name with benchmarks is not consistent across repositories, we check then both
             if (is_dir('benchmark')) {
-                $content[] = '/benchmark export-ignore';
+                $content[] = '/benchmark/ export-ignore';
             }
             if (is_dir('benchmarks')) {
-                $content[] = '/benchmarks export-ignore';
+                $content[] = '/benchmarks/ export-ignore';
             }
             $content[] = '/phpbench.json export-ignore';
         }

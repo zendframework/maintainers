@@ -404,6 +404,7 @@ class RebaseDocTemplates extends Command
             'Copyright (c) ' . $yearReplacement . ' ',
             $content
         );
+        $content = str_replace('http://www.zend.com', 'https://www.zend.com', $content);
         file_put_contents($file, $content);
     }
 

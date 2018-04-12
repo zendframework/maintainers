@@ -324,11 +324,12 @@ class RebaseDocTemplates extends Command
                     $ver[0] = '1';
                     $ver[1] = '0';
                 }
-                $content['extra']['branch-alias']['dev-master'] = $m[1] . '-dev';
+                $content['extra']['branch-alias']['dev-master'] = $m[1] . '.x-dev';
 
                 // check if there is develop branch
                 if ($output = exec('git ls-remote --heads origin refs/heads/develop')) {
                     $ver[1]++;
+                    $ver[2] = 'x';
 
                     $content['extra']['branch-alias']['dev-develop'] = implode('.', $ver) . '-dev';
                 }

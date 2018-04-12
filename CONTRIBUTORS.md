@@ -10,12 +10,11 @@ read/subscribe to the following resources:
 
  - [Coding Standards](https://github.com/zendframework/zend-coding-standard)
  - [Forums](https://discourse.zendframework.com/c/contributors)
- - [Slack](https://zendframework-slack.herokuapp.com)
+ - [Chat](https://zendframework-slack.herokuapp.com)
  - [Code of Conduct](CODE_OF_CONDUCT.md)
 
 If you are working on new features or refactoring
 [create a proposal](https://github.com/{org}/{repo}/issues/new).
-
 
 ## Filing Issue Reports
 
@@ -25,8 +24,9 @@ doing a little due-diligence:
 - See if your use case is covered in the manual.
 - See if your use case is demonstrated by the API docs.
 - Ask the mailing list about your particular use case.
-- Discuss your issue with someone in one of the IRC channels: `#zftalk` (general help) or
-  `#zftalk.dev` (contributors) on [Freenode IRC](http://freenode.net).
+- Discuss your issue with someone in one of the public channels:
+  [Chat](https://zendframework-slack.herokuapp.com/) or on the
+  [Forums](https://discourse.zendframework.com/c/contributors).
 - Write a failing test case.
 
 None of these are required steps. However, failure to do any of them can and likely will result in

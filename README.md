@@ -23,7 +23,7 @@ repositories, including:
 - a `LICENSE.md` template.
 - a `mkdocs.yml` file with MkDocs configuration.
 - a `phpcs.xml` file with zend coding standard configuration.
-- a `phpunit.xml.dist§ file with PHPUnit configuration.
+- a `phpunit.xml.dist` file with PHPUnit configuration.
 - a `README.md` template for new components with basic structure.
 - a `docs/` directory with support templates:
   - `CODE_OF_CONDUCT.md` with the Code Manifesto.

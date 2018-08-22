@@ -18,6 +18,7 @@ $application = new Application('zf-maintainer');
 $application->addCommands([
     new ChangelogBump('changelog-bump'),
     new CreatePackage('create-package'),
+    new PhplocCommand('phploc'),
     new RebaseDocTemplates('rebase-doc-templates'),
     new Sync\Keywords('sync:keywords'),
     new Sync\Repos('sync:repos'),

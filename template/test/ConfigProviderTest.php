@@ -14,6 +14,12 @@ use {namespace}\ConfigProvider;
 
 class ConfigProviderTest extends TestCase
 {
+
+    /**
+     * @var ConfigProvider
+     */
+    private $provider;
+
     public function setUp()
     {
         $this->provider = new ConfigProvider();

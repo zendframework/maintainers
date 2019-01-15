@@ -14,7 +14,6 @@ use {namespace}\ConfigProvider;
 
 class ConfigProviderTest extends TestCase
 {
-
     /**
      * @var ConfigProvider
      */

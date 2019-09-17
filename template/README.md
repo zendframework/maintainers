@@ -17,8 +17,11 @@ $ composer require {org}/{repo}
 
 Browse the documentation online at https://docs.zendframework.com/{repo}/
 
-## Support
+## Questions
 
-* [Issues](https://github.com/zendframework/{repo}/issues/)
-* [Chat](https://zendframework-slack.herokuapp.com/)
-* [Forum](https://discourse.zendframework.com/)
+For questions and support please use the official [forum](https://discourse.zendframework.com/).
+
+## Issues
+
+Use the [issue tracker](https://github.com/zendframework/{repo}/issues/) to
+report bugs or to submit feature requests.

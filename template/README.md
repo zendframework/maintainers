@@ -1,3 +1,5 @@
+![Logo](https://framework.zend.com/img/zend-framework-logo.svg)
+
 # {repo}
 
 [![Build Status](https://secure.travis-ci.org/{org}/{repo}.svg?branch=master)](https://secure.travis-ci.org/{org}/{repo})

@@ -123,6 +123,8 @@ class Keywords extends Command
                 );
             }
         }
+
+        return 0;
     }
 
     private function getRepos(Client $client, $org, $repo)
